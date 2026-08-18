@@ -1,0 +1,76 @@
+[build-system]
+requires = ["hatchling>=1.27.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "yt-dlp-gui"
+# One source of truth: app/__init__.py. Packaging, the About box and the
+# release artifact names all read the same string.
+dynamic = ["version"]
+description = "A native desktop application (Qt/PySide6) for yt-dlp"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "Unlicense"
+keywords = ["yt-dlp", "gui", "qt", "pyside6", "downloader"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: X11 Applications :: Qt",
+    "Environment :: Win32 (MS Windows)",
+    "Intended Audience :: End Users/Desktop",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: Microsoft :: Windows",
+    "Programming Language :: Python :: 3",
+    "Topic :: Multimedia :: Video",
+]
+dependencies = [
+    "PySide6>=6.6",
+    "yt-dlp>=2025.1.1",
+]
+
+[project.urls]
+# Kept in step with `app.PROJECT_URL` by tests/test_about.py
+Repository = "https://github.com/zvgelo/yt-dlp-gui"
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.6"]
+# Packaging-only tooling: not needed to run or develop the application
+build = ["pyinstaller>=6.16"]
+
+[project.gui-scripts]
+yt-dlp-gui = "app.application:main"
+
+[tool.hatch.version]
+path = "app/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]
+artifacts = ["assets/**"]
+
+[tool.hatch.build.targets.sdist]
+include = ["app", "assets", "tests", "main.py", "README.md", "LICENSE"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 110
+target-version = "py310"
+extend-exclude = [".venv", "mockup"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "C4", "RUF", "SIM", "BLE"]
+ignore = [
+    "B008",     # calls in default arguments are the norm in Qt
+    "RUF001",   # Polish characters in strings are not "ambiguous"
+    "RUF002",
+    "RUF003",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["SLF001"]
+# translate() calls with a literal context can exceed the line limit
+"app/gui/labels.py" = ["E501"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["app"]

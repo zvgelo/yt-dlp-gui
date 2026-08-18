@@ -1,0 +1,77 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+build/
+dist/
+.eggs/
+
+# Environments
+.venv/
+.venv-build/
+venv/
+env/
+.python-version
+
+# Packaging output and staging
+# .runtime/ holds the pinned FFmpeg and Deno a source checkout fetches; they
+# are downloaded by scripts/bootstrap_dev_runtime.sh, never committed.
+.runtime/
+AppDir/
+*.AppImage
+appimagetool*
+release/
+
+# Tooling
+.ruff_cache/
+.pytest_cache/
+.mypy_cache/
+.pyright/
+.coverage
+coverage.xml
+htmlcov/
+.tox/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*~
+
+# System
+.DS_Store
+Thumbs.db
+desktop.ini
+# Crash dumps: a Qt application that dies can leave one in the working directory
+core
+core.*
+*.core
+
+# Downloaded files and yt-dlp artifacts
+downloads/
+*.part
+*.ytdl
+*.info.json
+*.description
+
+# Log files. The application's own log lives in the user data directory, but a
+# run from a checkout with an explicit path can drop one here.
+*.log
+logs/
+
+# Local databases and caches (history.db normally lives outside the repo)
+*.db
+*.db-wal
+*.db-shm
+*.sqlite3
+cache/
+
+# Local, never shared
+*.local.json
+.env
+cookies.txt
+
+# Compiled translations are tracked on purpose: they are runtime resources,
+# like the SVG icons, and a fresh clone must show a translated interface.
+# Regenerate them with `python scripts/build_translations.py`.

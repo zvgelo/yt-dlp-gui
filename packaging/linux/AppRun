@@ -1,0 +1,23 @@
+#!/bin/sh
+# Entry point of the AppImage.
+#
+# The AppImage is mounted at a different path on every launch, so everything
+# is derived from $APPDIR rather than assumed. Nothing here writes inside the
+# mount: it is read-only, and the application keeps its database and settings
+# under the user's data directory through QStandardPaths.
+set -eu
+
+APPDIR="${APPDIR:-$(dirname "$(readlink -f "$0")")}"
+BIN_DIR="$APPDIR/usr/bin"
+
+# The bundled Qt has to win over any system Qt that happens to be installed
+export LD_LIBRARY_PATH="$APPDIR/usr/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+
+# Qt looks for its plugins relative to the executable; say so explicitly so a
+# stray QT_PLUGIN_PATH in the user's environment cannot redirect it
+unset QT_PLUGIN_PATH
+export QT_QPA_PLATFORM_PLUGIN_PATH="$BIN_DIR/_internal/PySide6/Qt/plugins/platforms"
+
+# The user's working directory is left alone: download destinations come from
+# the settings, not from wherever the launcher happened to start us
+exec "$BIN_DIR/yt-dlp-gui" "$@"
