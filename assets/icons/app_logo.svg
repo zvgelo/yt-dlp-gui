@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- yt-dlp GUI brand mark.
+     A geometric download arrow above a tray. The colours are tokens
+     substituted by app/gui/icons.py, so a single file serves every
+     theme. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <!-- arrow shaft -->
+    <path d="M32 9 V30" stroke="{{FG}}" stroke-width="7"/>
+    <!-- arrow head -->
+    <path d="M18.5 28 L32 42 L45.5 28 Z" fill="{{ACCENT}}" stroke="{{ACCENT}}" stroke-width="5"/>
+    <!-- tacka -->
+    <path d="M12 41 V50 A4 4 0 0 0 16 54 H48 A4 4 0 0 0 52 50 V41"
+          stroke="{{FG}}" stroke-width="6"/>
+  </g>
+</svg>

@@ -1,0 +1,91 @@
+# Build the release artifacts for both platforms.
+#
+# Never runs on a push to a branch: producing a 200 MB AppImage on every commit
+# helps nobody. It runs when a maintainer asks for it, or when a version tag is
+# pushed. Nothing is published automatically - the artifacts are uploaded for
+# download and validation, and attaching them to a release stays a manual step
+# after a clean-machine check.
+name: release
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+
+jobs:
+  linux:
+    name: Linux AppImage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build inside the release container
+        # Debian 11 rather than the runner's own distribution, so the artifact
+        # is not linked against a glibc newer than the users' machines
+        run: ./scripts/build_linux_appimage_container.sh --allow-dirty
+
+      - name: Install the graphics libraries the artifact expects from the host
+        # The AppImage deliberately does not bundle libGL/libEGL - they have to
+        # match the driver - and the runner image ships neither. Any machine
+        # with a desktop has them; a bare CI runner does not.
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends libegl1 libgl1 libdbus-1-3
+
+      - name: Verify the artifact
+        run: |
+          artifact=$(ls dist/linux/*.AppImage)
+          chmod +x "$artifact"
+          "$artifact" --version
+          "$artifact" --diagnostics
+          QT_QPA_PLATFORM=offscreen "$artifact" --self-test
+
+      - name: Write the manifest and checksums
+        run: python3 scripts/release_manifest.py --platform linux
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux-x86_64
+          path: |
+            dist/linux/*.AppImage
+            dist/linux/SHA256SUMS.txt
+            dist/linux/release-manifest.json
+          if-no-files-found: error
+
+  windows:
+    name: Windows bundle
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Create the build environment
+        run: |
+          python -m venv .venv-build
+          .venv-build\Scripts\pip install --upgrade pip
+          .venv-build\Scripts\pip install -r packaging\requirements-build.txt
+
+      - name: Build
+        # Inno Setup is not on the runner, so this produces the portable ZIP;
+        # the script skips the installer and says so
+        run: powershell -ExecutionPolicy Bypass -File scripts\build_windows.ps1 -AllowDirty
+
+      - name: Write the manifest and checksums
+        run: python scripts\release_manifest.py --platform windows
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-x86_64
+          path: |
+            dist/windows/*.zip
+            dist/windows/*.exe
+            dist/windows/SHA256SUMS.txt
+            dist/windows/release-manifest.json
+          if-no-files-found: error

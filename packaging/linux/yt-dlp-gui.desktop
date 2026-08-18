@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+Name=yt-dlp GUI
+GenericName=Media Downloader
+Comment=Download video and audio with yt-dlp
+Comment[pl]=Pobieraj wideo i dźwięk za pomocą yt-dlp
+Exec=yt-dlp-gui %U
+Icon=yt-dlp-gui
+Terminal=false
+Categories=AudioVideo;Audio;Video;
+Keywords=youtube;video;audio;download;yt-dlp;
+StartupNotify=true
+StartupWMClass=yt-dlp-gui

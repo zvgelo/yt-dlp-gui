@@ -1,0 +1,28 @@
+# Exact versions a release build is made from.
+#
+# Pinned rather than ranged: two builds of the same tag must contain the same
+# Qt, the same yt-dlp and the same bootloader. The application's own runtime
+# requirement stays the looser range in pyproject.toml; this file is only for
+# producing artifacts.
+#
+#   python -m venv .venv-build
+#   .venv-build/bin/pip install -r packaging/requirements-build.txt
+#
+# To move to a newer Qt or yt-dlp, change a line here, rebuild and test the
+# artifact before tagging.
+
+# PySide6 6.9.x is the last series with manylinux_2_28 wheels; 6.10 and newer
+# require glibc 2.39, which would restrict the AppImage to distributions from
+# 2024 onwards. The full test suite is run against this version in the release
+# container, so it is a verified choice rather than an assumed one.
+PySide6==6.9.3
+
+# A nightly rather than the last stable, and deliberately so: 2026.7.4 is the
+# newest stable and YouTube already answers its media requests with HTTP 403,
+# which was reproduced side by side with this build downloading the same video
+# successfully. A release that cannot download is worse than one built on a
+# nightly, and the pin is exact either way. Move back to a stable tag as soon
+# as one is published that passes ./scripts/validate_appimage.sh --integration.
+yt-dlp[default]==2026.8.17.73947.dev0
+
+pyinstaller==6.22.1

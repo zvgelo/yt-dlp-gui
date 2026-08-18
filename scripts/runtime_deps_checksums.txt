@@ -1,0 +1,6 @@
+# SHA256 of the pinned third-party runtime archives.
+# Regenerate with: python scripts/runtime_deps.py --refresh-checksums
+0b08fd6f43c7c42d6274ddbb2f02c80d7ca736f394a3217c3c82f2fb422c7bc4  https://github.com/BtbN/FFmpeg-Builds/releases/download/autobuild-2026-08-17-13-05/ffmpeg-n8.1.2-44-g7c533d0f86-linux64-lgpl-8.1.tar.xz
+8b010a3b1a4a0188a67cdb8a7a27348b2a501af78aec7fc74f2ace167368d530  https://github.com/denoland/deno/releases/download/v2.9.5/deno-x86_64-unknown-linux-gnu.zip
+bda492675bdb354ac55f93b96af2dbb35babef7de264c37d4ff83e022831b19d  https://github.com/BtbN/FFmpeg-Builds/releases/download/autobuild-2026-08-17-13-05/ffmpeg-n8.1.2-44-g7c533d0f86-win64-lgpl-8.1.zip
+171efab55ac6b9881fd53ee4c20f8bf3bb1340ffc618483746909014db12216a  https://github.com/denoland/deno/releases/download/v2.9.5/deno-x86_64-pc-windows-msvc.zip
