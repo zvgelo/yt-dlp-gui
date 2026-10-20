@@ -187,7 +187,7 @@ echo "  stylesheet, icons, catalogues, Qt platform and image plugins, licences"
 echo
 echo "[app] nothing that should not be there"
 for unwanted in usr/bin/_internal/tests usr/bin/_internal/.runtime \
-                usr/bin/_internal/mockup usr/bin/warn-yt-dlp-gui.txt \
+                usr/bin/warn-yt-dlp-gui.txt \
                 usr/bin/xref-yt-dlp-gui.html; do
     if [ -e "$ROOT_DIR/$unwanted" ]; then
         fail "the bundle contains $unwanted"

@@ -10,7 +10,7 @@ yt-dlp, no FFmpeg and no JavaScript runtime.
 
 | Component | Version | Pinned in |
 | --- | --- | --- |
-| yt-dlp | 2026.8.17 nightly | `packaging/requirements-build.txt` |
+| yt-dlp | 2026.8.19 | `packaging/requirements-build.txt` |
 | PySide6 / Qt | 6.9.3 | `packaging/requirements-build.txt` |
 | PyInstaller | 6.22.1 | `packaging/requirements-build.txt` |
 | FFmpeg / ffprobe | 8.1.2 (LGPL build) | `scripts/runtime_deps.py` |
@@ -18,12 +18,18 @@ yt-dlp, no FFmpeg and no JavaScript runtime.
 
 Licences of everything redistributed: [`licenses/README.md`](../licenses/README.md).
 
-**yt-dlp is pinned to a nightly on purpose.** The newest stable, 2026.7.4, no
-longer downloads from YouTube - its media requests come back as HTTP 403, which
-was reproduced side by side with a nightly succeeding on the same video from
-the same machine. `--integration` validation is what catches this, and it is
-the reason that step is not optional before tagging. Move back to a stable pin
-as soon as one passes it.
+**Validate yt-dlp before tagging.** YouTube changes independently of any pin:
+the stable 2026.7.4 already answered media requests with HTTP 403 while a
+nightly worked. `--integration` validation is what catches this,
+which is why that step is not optional. If the newest stable fails it, pin the
+nightly that passes and say so in the changelog.
+
+**The build container reads a Debian snapshot.** Debian 11 left LTS in August
+2026 and its live security archive is being dismantled, so the container build
+pins `snapshot.debian.org` to `YTDLP_GUI_DEBIAN_SNAPSHOT` (default in
+`scripts/build_linux_appimage_container.sh`). The snapshot holds every security
+update up to the end of LTS. Moving the build to a newer base image raises the
+minimum glibc for users, so do it deliberately.
 
 ## Build machine prerequisites
 
@@ -162,11 +168,16 @@ Verify it:
 
 ```powershell
 Expand-Archive dist\windows\yt-dlp-gui-*-windows-x86_64.zip -DestinationPath $env:TEMP\ytg
-& $env:TEMP\ytg\yt-dlp-gui\yt-dlp-gui.exe --version
-& $env:TEMP\ytg\yt-dlp-gui\yt-dlp-gui.exe --diagnostics
-& $env:TEMP\ytg\yt-dlp-gui\yt-dlp-gui.exe --self-test
+$exe = "$env:TEMP\ytg\yt-dlp-gui\yt-dlp-gui.exe"
+# A windowed program: wait for it explicitly and read its exit code
+(Start-Process $exe -ArgumentList '--self-test' -Wait -PassThru -NoNewWindow).ExitCode   # 0 = ok
 Get-FileHash dist\windows\*.zip -Algorithm SHA256
 ```
+
+A windowed executable has no console, so `--version` and `--diagnostics`
+print nothing there; open the application and check **Preferences →
+Diagnostics** instead. `build_windows.ps1` runs the same self-test against a
+throw-away profile.
 
 ## Manifest and checksums
 
@@ -215,24 +226,36 @@ Also worth doing on both platforms:
 An end-to-end check of the bundled binaries, including a real download:
 
 ```bash
-python scripts/integration_check.py --runtime build/runtime-linux
+./scripts/bootstrap_dev_runtime.sh       # the same pinned binaries, into .runtime/
+python scripts/integration_check.py --runtime .runtime/linux-x86_64
 ```
 
-## Tagging
+A host build (`build_linux_appimage.sh`) also leaves them in
+`build/runtime-linux`; the container build does not.
+
+## Tagging and publishing
 
 Only after the artifacts have been validated.
 
 ```bash
 git tag -a v1.0.0 -m 'yt-dlp GUI 1.0.0'
-git push origin v1.0.0
+git push origin main v1.0.0
 ```
 
-Attach to the release: the artifacts, `SHA256SUMS.txt`,
-`release-manifest.json` and the notes from `CHANGELOG.md`.
+Pushing a `v*` tag starts the `release` workflow. It builds both platforms
+and, once they succeed, creates a **draft** GitHub release named after the
+tag, with the Linux AppImage, `SHA256SUMS.txt` and `release-manifest.json`
+attached and the matching `CHANGELOG.md` section as the notes. The job fails
+if the changelog has no section for the version.
 
-Pushing a `v*` tag starts the `release` workflow. It builds and uploads the
-artifacts to the workflow run; it does not create a GitHub release and
-publishes nothing on its own.
+Review the draft, then publish it from the Releases page or with:
+
+```bash
+gh release edit v1.0.0 --draft=false --latest
+```
+
+The Windows bundle stays a workflow artifact until it has been validated on a
+Windows machine; attach it by hand when it has.
 
 ## Checklist
 
@@ -248,14 +271,14 @@ publishes nothing on its own.
 6. [ ] `cd dist/linux && sha256sum -c SHA256SUMS.txt` reports `OK`
 7. [ ] `release-manifest.json` shows the expected commit and a clean tree
 8. [ ] open the AppImage once by hand: themes, language, About, a download
-9. [ ] tag and publish
+9. [ ] tag, push, review the draft release, publish it
 
 **Windows**
 
 - [ ] ZIP built and smoke-tested on Windows
 - [ ] clean-VM validation
 - [ ] `release_manifest.py --platform windows`
-- [ ] artifacts and notes attached to the release
+- [ ] ZIP attached to the release by hand
 
 ## Updating the bundled dependencies
 

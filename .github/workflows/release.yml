@@ -21,7 +21,7 @@ jobs:
     name: Linux AppImage
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
 
       - name: Build inside the release container
         # Debian 11 rather than the runner's own distribution, so the artifact
@@ -44,10 +44,7 @@ jobs:
           "$artifact" --diagnostics
           QT_QPA_PLATFORM=offscreen "$artifact" --self-test
 
-      - name: Write the manifest and checksums
-        run: python3 scripts/release_manifest.py --platform linux
-
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
         with:
           name: linux-x86_64
           path: |
@@ -60,9 +57,9 @@ jobs:
     name: Windows bundle
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
         with:
           python-version: '3.12'
 
@@ -73,14 +70,14 @@ jobs:
           .venv-build\Scripts\pip install -r packaging\requirements-build.txt
 
       - name: Build
-        # Inno Setup is not on the runner, so this produces the portable ZIP;
-        # the script skips the installer and says so
+        # Always the portable ZIP; the installer too when the runner image
+        # carries Inno Setup. The script says which it produced
         run: powershell -ExecutionPolicy Bypass -File scripts\build_windows.ps1 -AllowDirty
 
       - name: Write the manifest and checksums
         run: python scripts\release_manifest.py --platform windows
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
         with:
           name: windows-x86_64
           path: |
@@ -89,3 +86,43 @@ jobs:
             dist/windows/SHA256SUMS.txt
             dist/windows/release-manifest.json
           if-no-files-found: error
+
+  publish:
+    # A tag push ends in a draft release: the Linux artifacts attached and the
+    # CHANGELOG section as the notes. Publishing the draft stays a manual
+    # step, after the clean-machine check in docs/RELEASE.md. The Windows
+    # bundle remains a workflow artifact until it is validated on Windows.
+    name: Draft GitHub release
+    if: startsWith(github.ref, 'refs/tags/v')
+    # Only Linux ships in the draft, so a Windows failure must not block it
+    needs: [linux]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
+        with:
+          name: linux-x86_64
+          path: dist/linux
+
+      - name: Extract the release notes
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          awk -v v="$version" '
+            $0 ~ "^## \\[" v "\\]" { found = 1; next }
+            found && /^## \[/ { exit }
+            found { print }
+          ' CHANGELOG.md > notes.md
+          test -s notes.md || { echo "CHANGELOG.md has no section for $version" >&2; exit 1; }
+
+      - name: Create the draft
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            --draft \
+            --title "yt-dlp GUI ${GITHUB_REF_NAME#v}" \
+            --notes-file notes.md \
+            dist/linux/*.AppImage dist/linux/SHA256SUMS.txt dist/linux/release-manifest.json

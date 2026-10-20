@@ -1,4 +1,4 @@
-"""Testy budowania opcji `YoutubeDL` i konwersji info_dict → modele."""
+"""Tests for building `YoutubeDL` options and converting info_dict into models."""
 
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ from app.settings import AppSettings
 
 @pytest.fixture
 def service():
-    return YtDlpService(AppSettings(output_dir='/tmp/pobrane'))
+    return YtDlpService(AppSettings(output_dir='/tmp/downloads'))
 
 
 def _keys(options):
@@ -87,7 +87,7 @@ def test_subtitles_only_for_video(service):
 
 
 def test_playlist_template(service):
-    request = DownloadRequest(url='u', output_dir='/tmp/x', playlist_title='Moja lista',
+    request = DownloadRequest(url='u', output_dir='/tmp/x', playlist_title='My list',
                               playlist_index=3)
     template = service.download_options(request)['outtmpl']['default']
     assert template == '%(playlist_title)s/%(playlist_index)03d - %(title)s.%(ext)s'
@@ -137,7 +137,7 @@ def test_single_media():
         '_type': 'video',
         'title': 'Title',
         'webpage_url': 'https://example.com/v',
-        'uploader': 'Autor',
+        'uploader': 'Author',
         'duration': 125,
         'extractor_key': 'Youtube',
         'thumbnails': [{'url': 'https://example.com/a.jpg'}, {'url': 'https://example.com/b.jpg'}],
@@ -150,7 +150,7 @@ def test_single_media():
 
     assert info.is_playlist is False
     assert info.title == 'Title'
-    assert info.author == 'Autor'
+    assert info.author == 'Author'
     assert len(info.formats) == 1
     languages = {track.language for track in info.subtitles}
     assert languages == {'pl', 'en'}  # no live_chat and no 'en-pl' translations
@@ -190,3 +190,20 @@ def test_file_path_after_postprocessing():
     assert final_filepath({'requested_downloads': [{'filepath': '/tmp/a.mp3'}]}) == '/tmp/a.mp3'
     assert final_filepath({'_filename': '/tmp/b.mp4'}) == '/tmp/b.mp4'
     assert final_filepath(None) == ''
+
+
+@pytest.mark.parametrize(('kind', 'target'), [
+    (MediaKind.VIDEO, 'webm'), (MediaKind.AUDIO, 'wav'), (MediaKind.AUDIO, 'aac'),
+])
+def test_no_cover_art_where_yt_dlp_cannot_embed_it(service, kind, target):
+    # EmbedThumbnailPP raises for these, failing an otherwise good download
+    request = DownloadRequest(url='https://example.com/v', output_dir='/tmp', kind=kind,
+                              container=target, audio_format=target, embed_thumbnail=True)
+    options = service.download_options(request)
+    assert 'EmbedThumbnail' not in _keys(options)
+    assert not options.get('writethumbnail')
+
+
+def test_cover_art_is_embedded_in_mp4(service):
+    request = DownloadRequest(url='https://example.com/v', output_dir='/tmp', embed_thumbnail=True)
+    assert 'EmbedThumbnail' in _keys(service.download_options(request))

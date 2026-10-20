@@ -57,7 +57,7 @@ def _task(**kwargs) -> DownloadTask:
                         **kwargs)
 
 
-# ------------------------------------------------------------------- schemat
+# ------------------------------------------------------------------- schema
 
 
 def test_the_database_is_created_with_a_schema_version(db):
@@ -80,7 +80,7 @@ def test_indexes_for_duplicate_lookups_exist(db):
     assert 'idx_records_status' in names
 
 
-# ------------------------------------------------------------- podstawy CRUD
+# ------------------------------------------------------------- CRUD basics
 
 
 def test_write_and_read(store):
@@ -91,9 +91,9 @@ def test_write_and_read(store):
 
 
 def test_listing_starts_with_the_newest(store):
-    store.add(_record('stary', created_at='2026-01-01T10:00:00+00:00'))
-    store.add(_record('nowy', created_at='2026-06-01T10:00:00+00:00'))
-    assert [r.id for r in store.list()] == ['nowy', 'stary']
+    store.add(_record('old', created_at='2026-01-01T10:00:00+00:00'))
+    store.add(_record('new', created_at='2026-06-01T10:00:00+00:00'))
+    assert [r.id for r in store.list()] == ['new', 'old']
 
 
 def test_filtering_by_status(store):
@@ -125,16 +125,16 @@ def test_an_identity_without_an_id_finds_nothing(store):
 
 
 def test_a_history_record_does_not_prove_the_file_exists(store, tmp_path):
-    istniejacy = tmp_path / 'jest.mp4'
-    istniejacy.write_text('x')
-    store.add(_record('a', final_path=str(istniejacy)))
-    store.add(_record('b', final_path=str(tmp_path / 'nie-ma.mp4')))
+    existing = tmp_path / 'present.mp4'
+    existing.write_text('x')
+    store.add(_record('a', final_path=str(existing)))
+    store.add(_record('b', final_path=str(tmp_path / 'missing.mp4')))
 
     assert store.get('a').file_exists() is True
     assert store.get('b').file_exists() is False
 
 
-# ---------------------------------------------------------------- playlisty
+# ---------------------------------------------------------------- playlists
 
 
 def test_a_playlist_is_stored_with_its_items(store):
@@ -239,7 +239,7 @@ def test_history_remembers_the_real_filename():
     assert record.final_name == '007 - Song.mp4'
 
 
-# --------------------------------------------------- integracja z kontrolerem
+# --------------------------------------------------- controller integration
 
 
 @pytest.fixture
@@ -361,7 +361,7 @@ def test_the_database_lives_in_the_application_data_folder(qapp, tmp_path, monke
     assert history_path().name == 'history.db'
 
 
-# --------------------------------------------------------------- migracje
+# --------------------------------------------------------------- migrations
 
 
 _LEGACY_RECORDS_TABLE = """
@@ -396,8 +396,8 @@ def test_migration_adds_missing_columns(db):
     _legacy_database(db)
     store = HistoryStore(db)
 
-    store.add(_record('nowy', status='needs_review', duplicate_kind='other_target'))
-    assert store.get('nowy').duplicate_kind == 'other_target'
+    store.add(_record('new', status='needs_review', duplicate_kind='other_target'))
+    assert store.get('new').duplicate_kind == 'other_target'
 
 
 def test_migration_preserves_the_data(db):
@@ -433,7 +433,7 @@ def test_a_database_from_a_newer_version_is_left_alone(db):
         assert connection.execute('PRAGMA user_version').fetchone()[0] == 99
 
 
-# ------------------------------------------------- kontekst decyzji po restarcie
+# ------------------------------------------- decision context after a restart
 
 
 def test_a_pending_decision_keeps_the_file_reference(qapp, db):
@@ -441,9 +441,9 @@ def test_a_pending_decision_keeps_the_file_reference(qapp, db):
     from app.core.download_controller import DownloadController
 
     store = HistoryStore(db)
-    store.add(_record('istniejacy', final_path='/media/A/film.mp4'))
+    store.add(_record('existing', final_path='/media/A/film.mp4'))
     store.add(_record('konflikt', status=TaskState.NEEDS_REVIEW.value,
-                      duplicate_kind='other_target', duplicate_of_record_id='istniejacy'))
+                      duplicate_kind='other_target', duplicate_of_record_id='existing'))
 
     controller = DownloadController(YtDlpService(AppSettings()), history=HistoryStore(db))
     try:
@@ -469,3 +469,34 @@ def test_reloading_history_does_not_duplicate_entries(qapp, db):
         assert len(controller.tasks) == 1
     finally:
         controller.shutdown()
+
+
+def test_migration_survives_an_index_on_a_missing_column(db):
+    """The indexes are created after the columns; otherwise start-up fails."""
+    with sqlite3.connect(db) as connection:
+        connection.execute(
+            "CREATE TABLE records (id TEXT PRIMARY KEY, source_url TEXT NOT NULL, "
+            "status TEXT NOT NULL, created_at TEXT NOT NULL)")
+        connection.execute('PRAGMA user_version=1')
+
+    store = HistoryStore(db)
+    store.add(_record('after-upgrade', extractor='youtube', media_id='abc'))
+    assert store.get('after-upgrade').media_id == 'abc'
+
+
+def test_a_restored_task_keeps_its_download_options(db):
+    """A retry after a restart must download what was asked for, not the defaults."""
+    request = DownloadRequest(url='https://example.com/v', output_dir='/tmp', container='mkv',
+                              format_selector='137+140', write_subtitles=True,
+                              subtitle_languages=('de',), embed_thumbnail=False,
+                              create_playlist_folder=False)
+    store = HistoryStore(db)
+    store.add(record_from_task(DownloadTask(request=request)))
+
+    restored = task_from_record(store.list()[0]).request
+    assert restored.container == 'mkv'
+    assert restored.format_selector == '137+140'
+    assert restored.write_subtitles is True
+    assert restored.subtitle_languages == ('de',)
+    assert restored.embed_thumbnail is False
+    assert restored.create_playlist_folder is False

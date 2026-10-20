@@ -3,66 +3,76 @@
 <context>
     <name>AboutDialog</name>
     <message>
-        <location filename="../app/gui/about_dialog.py" line="122" />
-        <location filename="../app/gui/about_dialog.py" line="181" />
+        <location filename="../app/gui/about_dialog.py" line="134" />
+        <location filename="../app/gui/about_dialog.py" line="203" />
         <source>Licence text</source>
         <extracomment>Rows in the components table, in the order they are shown</extracomment>
         <translation>Tekst licencji</translation>
     </message>
     <message>
-        <location filename="../app/gui/about_dialog.py" line="152" />
-        <location filename="../app/gui/about_dialog.py" line="153" />
+        <location filename="../app/gui/about_dialog.py" line="164" />
+        <location filename="../app/gui/about_dialog.py" line="165" />
         <source>About {0}</source>
         <translation>O programie {0}</translation>
     </message>
     <message>
-        <location filename="../app/gui/about_dialog.py" line="154" />
+        <location filename="../app/gui/about_dialog.py" line="166" />
         <source>Version {0}</source>
         <translation>Wersja {0}</translation>
     </message>
     <message>
-        <location filename="../app/gui/about_dialog.py" line="156" />
+        <location filename="../app/gui/about_dialog.py" line="168" />
         <source>A desktop graphical interface for yt-dlp.</source>
         <translation>Graficzny interfejs desktopowy dla yt-dlp.</translation>
     </message>
     <message>
-        <location filename="../app/gui/about_dialog.py" line="157" />
+        <location filename="../app/gui/about_dialog.py" line="169" />
         <source>Built with</source>
         <translation>Zbudowano z</translation>
     </message>
     <message>
-        <location filename="../app/gui/about_dialog.py" line="159" />
+        <location filename="../app/gui/about_dialog.py" line="171" />
         <source>not found</source>
         <translation>nie znaleziono</translation>
     </message>
     <message>
-        <location filename="../app/gui/about_dialog.py" line="173" />
+        <location filename="../app/gui/about_dialog.py" line="185" />
         <source>Project</source>
         <translation>Projekt</translation>
     </message>
     <message>
-        <location filename="../app/gui/about_dialog.py" line="176" />
+        <location filename="../app/gui/about_dialog.py" line="193" />
         <source>Project repository</source>
         <translation>Repozytorium projektu</translation>
     </message>
     <message>
-        <location filename="../app/gui/about_dialog.py" line="177" />
+        <location filename="../app/gui/about_dialog.py" line="196" />
+        <source>Based on {0}: every analysis, download and conversion is done by yt-dlp, developed by its contributors. This application is the window around it.</source>
+        <translation>Oparte na {0}: każdą analizę, pobieranie i konwersję wykonuje yt-dlp, rozwijany przez jego społeczność. Ta aplikacja jest oknem wokół niego.</translation>
+    </message>
+    <message>
+        <location filename="../app/gui/about_dialog.py" line="198" />
+        <source>yt-dlp project</source>
+        <translation>Projekt yt-dlp</translation>
+    </message>
+    <message>
+        <location filename="../app/gui/about_dialog.py" line="199" />
         <source>Released under {0}.</source>
         <translation>Udostępniony na licencji {0}.</translation>
     </message>
     <message>
-        <location filename="../app/gui/about_dialog.py" line="179" />
+        <location filename="../app/gui/about_dialog.py" line="201" />
         <source>Hide licence</source>
         <translation>Ukryj licencję</translation>
     </message>
     <message>
-        <location filename="../app/gui/about_dialog.py" line="180" />
+        <location filename="../app/gui/about_dialog.py" line="202" />
         <source>View licence</source>
         <translation>Pokaż licencję</translation>
     </message>
     <message>
-        <location filename="../app/gui/about_dialog.py" line="182" />
-        <location filename="../app/gui/about_dialog.py" line="183" />
+        <location filename="../app/gui/about_dialog.py" line="204" />
+        <location filename="../app/gui/about_dialog.py" line="205" />
         <source>Close</source>
         <translation>Zamknij</translation>
     </message>
@@ -230,7 +240,7 @@
     </message>
     <message>
         <location filename="../app/gui/labels.py" line="64" />
-        <location filename="../app/gui/labels.py" line="297" />
+        <location filename="../app/gui/labels.py" line="326" />
         <source>Video</source>
         <translation>Wideo</translation>
     </message>
@@ -324,27 +334,27 @@
     <message>
         <location filename="../app/gui/labels.py" line="124" />
         <location filename="../app/gui/labels.py" line="141" />
-        <location filename="../app/gui/labels.py" line="331" />
+        <location filename="../app/gui/labels.py" line="360" />
         <source>Done</source>
         <translation>Gotowe</translation>
     </message>
     <message>
         <location filename="../app/gui/labels.py" line="125" />
         <location filename="../app/gui/labels.py" line="143" />
-        <location filename="../app/gui/labels.py" line="332" />
+        <location filename="../app/gui/labels.py" line="361" />
         <source>With errors</source>
         <translation>Z błędami</translation>
     </message>
     <message>
         <location filename="../app/gui/labels.py" line="126" />
         <location filename="../app/gui/labels.py" line="145" />
-        <location filename="../app/gui/labels.py" line="333" />
+        <location filename="../app/gui/labels.py" line="362" />
         <source>Error</source>
         <translation>Błąd</translation>
     </message>
     <message>
         <location filename="../app/gui/labels.py" line="127" />
-        <location filename="../app/gui/labels.py" line="334" />
+        <location filename="../app/gui/labels.py" line="363" />
         <source>Cancelled</source>
         <translation>Anulowane</translation>
     </message>
@@ -558,218 +568,283 @@
         <translation>Nie udało się wczytać całej playlisty.</translation>
     </message>
     <message>
-        <location filename="../app/gui/labels.py" line="207" />
+        <location filename="../app/gui/labels.py" line="210" />
+        <source>Network</source>
+        <translation>Sieć</translation>
+    </message>
+    <message>
+        <location filename="../app/gui/labels.py" line="211" />
+        <source>Server</source>
+        <translation>Serwer</translation>
+    </message>
+    <message>
+        <location filename="../app/gui/labels.py" line="212" />
+        <source>Site or address</source>
+        <translation>Strona lub adres</translation>
+    </message>
+    <message>
+        <location filename="../app/gui/labels.py" line="213" />
+        <source>Sign-in required</source>
+        <translation>Wymagane logowanie</translation>
+    </message>
+    <message>
+        <location filename="../app/gui/labels.py" line="214" />
+        <source>Region</source>
+        <translation>Region</translation>
+    </message>
+    <message>
+        <location filename="../app/gui/labels.py" line="215" />
+        <source>Format</source>
+        <translation>Format</translation>
+    </message>
+    <message>
+        <location filename="../app/gui/labels.py" line="216" />
+        <source>FFmpeg</source>
+        <translation>FFmpeg</translation>
+    </message>
+    <message>
+        <location filename="../app/gui/labels.py" line="217" />
+        <source>Files and folders</source>
+        <translation>Pliki i katalogi</translation>
+    </message>
+    <message>
+        <location filename="../app/gui/labels.py" line="218" />
+        <source>Playlist</source>
+        <translation>Playlista</translation>
+    </message>
+    <message>
+        <location filename="../app/gui/labels.py" line="219" />
+        <source>Other</source>
+        <translation>Inne</translation>
+    </message>
+    <message>
+        <location filename="../app/gui/labels.py" line="227" />
+        <source>FFmpeg was not found. Merging video with audio, audio conversion, cover art and subtitle embedding are unavailable.</source>
+        <translation>Nie znaleziono FFmpeg. Scalanie obrazu z dźwiękiem, konwersja audio, osadzanie okładek i napisów są niedostępne.</translation>
+    </message>
+    <message>
+        <location filename="../app/gui/labels.py" line="230" />
+        <source>FFmpeg {0}</source>
+        <translation>FFmpeg {0}</translation>
+    </message>
+    <message>
+        <location filename="../app/gui/labels.py" line="231" />
+        <source>FFmpeg is available</source>
+        <translation>FFmpeg jest dostępny</translation>
+    </message>
+    <message>
+        <location filename="../app/gui/labels.py" line="236" />
         <source>It needs an account with access — try browser cookies.</source>
         <translation>Wymaga konta z dostępem — spróbuj ciasteczek z przeglądarki.</translation>
     </message>
     <message>
-        <location filename="../app/gui/labels.py" line="208" />
-        <location filename="../app/gui/labels.py" line="209" />
-        <source>Enable browser cookies in Preferences → Network.</source>
-        <translation>Włącz ciasteczka z przeglądarki w Preferencjach → Sieć.</translation>
+        <location filename="../app/gui/labels.py" line="237" />
+        <location filename="../app/gui/labels.py" line="238" />
+        <source>Enable browser cookies in Preferences → Network and FFmpeg.</source>
+        <translation>Włącz ciasteczka z przeglądarki w Preferencjach → Sieć i FFmpeg.</translation>
     </message>
     <message>
-        <location filename="../app/gui/labels.py" line="210" />
-        <source>A proxy set in Preferences → Network may help.</source>
-        <translation>Może pomóc proxy ustawione w Preferencjach → Sieć.</translation>
+        <location filename="../app/gui/labels.py" line="239" />
+        <source>A proxy set in Preferences → Network and FFmpeg may help.</source>
+        <translation>Może pomóc proxy ustawione w Preferencjach → Sieć i FFmpeg.</translation>
     </message>
     <message>
-        <location filename="../app/gui/labels.py" line="211" />
+        <location filename="../app/gui/labels.py" line="243" />
+        <source>Install FFmpeg or set its folder in Preferences → Network and FFmpeg.</source>
+        <translation>Zainstaluj FFmpeg albo wskaż jego katalog w Preferencjach → Sieć i FFmpeg.</translation>
+    </message>
+    <message>
+        <location filename="../app/gui/labels.py" line="245" />
+        <source>Check the proxy address in Preferences → Network and FFmpeg.</source>
+        <translation>Sprawdź adres proxy w Preferencjach → Sieć i FFmpeg.</translation>
+    </message>
+    <message>
+        <location filename="../app/gui/labels.py" line="240" />
         <source>yt-dlp has no extractor for this site.</source>
         <translation>yt-dlp nie ma ekstraktora dla tej strony.</translation>
     </message>
     <message>
-        <location filename="../app/gui/labels.py" line="212" />
+        <location filename="../app/gui/labels.py" line="241" />
         <source>Pick another quality or “Best available”.</source>
         <translation>Wybierz inną jakość albo „Najlepsza dostępna”.</translation>
     </message>
     <message>
-        <location filename="../app/gui/labels.py" line="213" />
+        <location filename="../app/gui/labels.py" line="242" />
         <source>The video may be DRM protected.</source>
         <translation>Materiał może być chroniony DRM.</translation>
     </message>
     <message>
-        <location filename="../app/gui/labels.py" line="214" />
-        <source>Install FFmpeg or set its folder in Preferences → Network.</source>
-        <translation>Zainstaluj FFmpeg albo wskaż jego katalog w Preferencjach → Sieć.</translation>
-    </message>
-    <message>
-        <location filename="../app/gui/labels.py" line="215" />
+        <location filename="../app/gui/labels.py" line="244" />
         <source>Check your connection and try again.</source>
         <translation>Sprawdź połączenie i spróbuj ponownie.</translation>
     </message>
     <message>
-        <location filename="../app/gui/labels.py" line="216" />
-        <source>Check the proxy address in Preferences → Network.</source>
-        <translation>Sprawdź adres proxy w Preferencjach → Sieć.</translation>
-    </message>
-    <message>
-        <location filename="../app/gui/labels.py" line="217" />
+        <location filename="../app/gui/labels.py" line="246" />
         <source>Choose a different destination folder.</source>
         <translation>Wskaż inny katalog docelowy.</translation>
     </message>
     <message>
-        <location filename="../app/gui/labels.py" line="218" />
+        <location filename="../app/gui/labels.py" line="247" />
         <source>Check whether FFmpeg is installed.</source>
         <translation>Sprawdź, czy FFmpeg jest zainstalowany.</translation>
     </message>
     <message>
-        <location filename="../app/gui/labels.py" line="219" />
+        <location filename="../app/gui/labels.py" line="248" />
         <source>This usually means FFmpeg is missing or too old.</source>
         <translation>Zwykle oznacza to brak lub zbyt starą wersję FFmpeg.</translation>
     </message>
     <message>
-        <location filename="../app/gui/labels.py" line="240" />
+        <location filename="../app/gui/labels.py" line="269" />
         <source>ETA {0}</source>
         <translation>pozostało {0}</translation>
     </message>
     <message>
-        <location filename="../app/gui/labels.py" line="242" />
+        <location filename="../app/gui/labels.py" line="271" />
         <source>fragment {0}/{1}</source>
         <translation>fragment {0}/{1}</translation>
     </message>
     <message>
-        <location filename="../app/gui/labels.py" line="261" />
+        <location filename="../app/gui/labels.py" line="290" />
         <source>The playlist could not be fully retrieved — some items may be missing.</source>
         <translation>Nie udało się wczytać całej playlisty — część pozycji może brakować.</translation>
     </message>
     <message>
-        <location filename="../app/gui/labels.py" line="262" />
+        <location filename="../app/gui/labels.py" line="291" />
         <source>The playlist could not be retrieved.</source>
         <translation>Nie udało się wczytać playlisty.</translation>
     </message>
     <message>
-        <location filename="../app/gui/labels.py" line="267" />
+        <location filename="../app/gui/labels.py" line="296" />
         <source>Could not download {0} of {1} items.</source>
         <translation>Nie udało się pobrać {0} z {1} pozycji.</translation>
     </message>
     <message>
-        <location filename="../app/gui/labels.py" line="276" />
+        <location filename="../app/gui/labels.py" line="305" />
         <source>at least {0}</source>
         <translation>co najmniej {0}</translation>
     </message>
     <message>
-        <location filename="../app/gui/labels.py" line="285" />
+        <location filename="../app/gui/labels.py" line="314" />
         <source>Light</source>
         <translation>Jasny</translation>
     </message>
     <message>
-        <location filename="../app/gui/labels.py" line="286" />
+        <location filename="../app/gui/labels.py" line="315" />
         <source>Dark</source>
         <translation>Ciemny</translation>
     </message>
     <message>
-        <location filename="../app/gui/labels.py" line="287" />
+        <location filename="../app/gui/labels.py" line="316" />
         <source>Steel</source>
         <translation>Stalowy</translation>
     </message>
     <message>
-        <location filename="../app/gui/labels.py" line="293" />
+        <location filename="../app/gui/labels.py" line="322" />
         <source>All</source>
         <translation>Wszystkie</translation>
     </message>
     <message>
-        <location filename="../app/gui/labels.py" line="294" />
+        <location filename="../app/gui/labels.py" line="323" />
         <source>In progress</source>
         <translation>W trakcie</translation>
     </message>
     <message>
-        <location filename="../app/gui/labels.py" line="295" />
+        <location filename="../app/gui/labels.py" line="324" />
         <source>Needs review</source>
         <translation>Do akceptacji</translation>
     </message>
     <message>
-        <location filename="../app/gui/labels.py" line="296" />
+        <location filename="../app/gui/labels.py" line="325" />
         <source>Failed</source>
         <translation>Błędy</translation>
     </message>
     <message>
-        <location filename="../app/gui/labels.py" line="298" />
+        <location filename="../app/gui/labels.py" line="327" />
         <source>Audio</source>
         <translation>Audio</translation>
     </message>
     <message>
-        <location filename="../app/gui/labels.py" line="299" />
+        <location filename="../app/gui/labels.py" line="328" />
         <source>Playlists</source>
         <translation>Playlisty</translation>
     </message>
     <message>
-        <location filename="../app/gui/labels.py" line="300" />
+        <location filename="../app/gui/labels.py" line="329" />
         <source>Completed</source>
         <translation>Ukończone</translation>
     </message>
     <message>
-        <location filename="../app/gui/labels.py" line="315" />
+        <location filename="../app/gui/labels.py" line="344" />
         <source>now: {0}</source>
         <translation>teraz: {0}</translation>
     </message>
     <message>
-        <location filename="../app/gui/labels.py" line="317" />
+        <location filename="../app/gui/labels.py" line="346" />
         <source>the full playlist could not be retrieved</source>
         <translation>nie udało się wczytać całej playlisty</translation>
     </message>
     <message>
-        <location filename="../app/gui/labels.py" line="339" />
+        <location filename="../app/gui/labels.py" line="368" />
         <source>Processing…</source>
         <translation>Przetwarzanie…</translation>
     </message>
     <message>
-        <location filename="../app/gui/labels.py" line="343" />
+        <location filename="../app/gui/labels.py" line="372" />
         <source>Connecting…</source>
         <translation>Łączenie…</translation>
     </message>
     <message>
-        <location filename="../app/gui/labels.py" line="354" />
+        <location filename="../app/gui/labels.py" line="383" />
         <source>The same item is already in the queue.</source>
         <translation>Ten materiał jest już w kolejce.</translation>
     </message>
     <message>
-        <location filename="../app/gui/labels.py" line="356" />
+        <location filename="../app/gui/labels.py" line="385" />
         <source>This item has already been downloaded.</source>
         <translation>Ten materiał został już pobrany.</translation>
     </message>
     <message>
-        <location filename="../app/gui/labels.py" line="358" />
+        <location filename="../app/gui/labels.py" line="387" />
         <source>Existing file: {0}</source>
         <translation>Istniejący plik: {0}</translation>
     </message>
     <message>
-        <location filename="../app/gui/labels.py" line="359" />
+        <location filename="../app/gui/labels.py" line="388" />
         <source>New destination: {0}</source>
         <translation>Nowy katalog: {0}</translation>
     </message>
     <message>
-        <location filename="../app/gui/labels.py" line="368" />
+        <location filename="../app/gui/labels.py" line="397" />
         <source>Skipped — the file already exists in the destination folder.</source>
         <translation>Pominięto — plik już istnieje w katalogu docelowym.</translation>
     </message>
     <message>
-        <location filename="../app/gui/labels.py" line="369" />
+        <location filename="../app/gui/labels.py" line="398" />
         <source>Skipped by you.</source>
         <translation>Pominięte przez Ciebie.</translation>
     </message>
     <message>
-        <location filename="../app/gui/labels.py" line="385" />
+        <location filename="../app/gui/labels.py" line="414" />
         <source>Last attempt: {0}</source>
         <translation>Ostatnia próba: {0}</translation>
     </message>
     <message>
-        <location filename="../app/gui/labels.py" line="395" />
+        <location filename="../app/gui/labels.py" line="424" />
         <source>Retrying…</source>
         <translation>Ponawianie…</translation>
     </message>
     <message>
-        <location filename="../app/gui/labels.py" line="400" />
+        <location filename="../app/gui/labels.py" line="429" />
         <source>manual</source>
         <translation>ręczna</translation>
     </message>
     <message>
-        <location filename="../app/gui/labels.py" line="400" />
+        <location filename="../app/gui/labels.py" line="429" />
         <source>automatic</source>
         <translation>automatyczna</translation>
     </message>
     <message>
-        <location filename="../app/gui/labels.py" line="402" />
+        <location filename="../app/gui/labels.py" line="431" />
         <source>succeeded</source>
         <translation>powodzenie</translation>
     </message>
@@ -988,82 +1063,82 @@ Pobrane pliki nie zostaną usunięte.</translation>
         <translation>Usuń ukończone</translation>
     </message>
     <message>
-        <location filename="../app/gui/main_window.py" line="703" />
-        <source>Settings saved</source>
-        <translation>Ustawienia zapisane</translation>
+        <location filename="../app/gui/main_window.py" line="708" />
+        <source>Preferences saved</source>
+        <translation>Preferencje zapisane</translation>
     </message>
     <message>
-        <location filename="../app/gui/main_window.py" line="712" />
+        <location filename="../app/gui/main_window.py" line="717" />
         <source>Download folder</source>
         <translation>Katalog pobrań</translation>
     </message>
     <message>
-        <location filename="../app/gui/main_window.py" line="768" />
+        <location filename="../app/gui/main_window.py" line="783" />
         <source>FFmpeg was not found. Merging, conversion and audio extraction will not work.</source>
         <translation>Nie znaleziono FFmpeg. Scalanie, konwersja i wyodrębnianie dźwięku nie zadziałają.</translation>
     </message>
     <message>
-        <location filename="../app/gui/main_window.py" line="772" />
+        <location filename="../app/gui/main_window.py" line="787" />
         <source>No supported JavaScript runtime was found. Some YouTube formats may be unavailable.</source>
         <translation>Nie znaleziono obsługiwanego środowiska JavaScript. Część formatów YouTube może być niedostępna.</translation>
     </message>
     <message>
-        <location filename="../app/gui/main_window.py" line="814" />
+        <location filename="../app/gui/main_window.py" line="829" />
         <source>Analysing {0}…</source>
         <translation>Analizuję {0}…</translation>
     </message>
     <message>
-        <location filename="../app/gui/main_window.py" line="829" />
+        <location filename="../app/gui/main_window.py" line="844" />
         <source>queued: {0}</source>
         <translation>w kolejce: {0}</translation>
     </message>
     <message>
-        <location filename="../app/gui/main_window.py" line="832" />
+        <location filename="../app/gui/main_window.py" line="847" />
         <source>errors: {0}</source>
         <translation>błędy: {0}</translation>
     </message>
     <message>
-        <location filename="../app/gui/main_window.py" line="835" />
+        <location filename="../app/gui/main_window.py" line="850" />
         <source>completed with errors: {0}</source>
         <translation>ukończone z błędami: {0}</translation>
     </message>
     <message>
-        <location filename="../app/gui/main_window.py" line="838" />
+        <location filename="../app/gui/main_window.py" line="853" />
         <source>awaiting decision: {0}</source>
         <translation>do akceptacji: {0}</translation>
     </message>
     <message>
-        <location filename="../app/gui/main_window.py" line="840" />
+        <location filename="../app/gui/main_window.py" line="855" />
         <source>paused</source>
         <translation>wstrzymane</translation>
     </message>
     <message>
-        <location filename="../app/gui/main_window.py" line="846" />
+        <location filename="../app/gui/main_window.py" line="861" />
         <source>All downloads finished</source>
         <translation>Wszystkie pobrania zakończone</translation>
     </message>
     <message>
-        <location filename="../app/gui/main_window.py" line="848" />
+        <location filename="../app/gui/main_window.py" line="863" />
         <source>Finished with errors — see the log for details</source>
         <translation>Zakończono z błędami — szczegóły w dzienniku</translation>
     </message>
     <message>
-        <location filename="../app/gui/main_window.py" line="850" />
+        <location filename="../app/gui/main_window.py" line="865" />
         <source>Cancelled</source>
         <translation>Anulowane</translation>
     </message>
     <message>
-        <location filename="../app/gui/main_window.py" line="851" />
+        <location filename="../app/gui/main_window.py" line="866" />
         <source>Ready</source>
         <translation>Gotowy</translation>
     </message>
     <message>
-        <location filename="../app/gui/main_window.py" line="874" />
+        <location filename="../app/gui/main_window.py" line="889" />
         <source>Close the program?</source>
         <translation>Zamknąć program?</translation>
     </message>
     <message>
-        <location filename="../app/gui/main_window.py" line="875" />
+        <location filename="../app/gui/main_window.py" line="890" />
         <source>A download is in progress. Closing will interrupt it. Continue?</source>
         <translation>Trwa pobieranie. Zamknięcie przerwie je. Kontynuować?</translation>
     </message>
@@ -1255,466 +1330,466 @@ Pobrane pliki nie zostaną usunięte.</translation>
 <context>
     <name>SettingsDialog</name>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="108" />
+        <location filename="../app/gui/settings_dialog.py" line="405" />
         <source>Settings sections</source>
-        <extracomment>Browsers supported by yt_dlp.cookies.SUPPORTED_BROWSERS SponsorBlock categories recognised by SponsorBlockPP</extracomment>
         <translation>Sekcje ustawień</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="375" />
+        <location filename="../app/gui/settings_dialog.py" line="381" />
         <source>Copied</source>
+        <extracomment>Browsers supported by yt_dlp.cookies.SUPPORTED_BROWSERS SponsorBlock categories recognised by SponsorBlockPP</extracomment>
         <translation>Skopiowano</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="377" />
-        <location filename="../app/gui/settings_dialog.py" line="393" />
+        <location filename="../app/gui/settings_dialog.py" line="385" />
+        <location filename="../app/gui/settings_dialog.py" line="417" />
         <source>Copy system information</source>
         <translation>Kopiuj informacje o systemie</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="382" />
+        <location filename="../app/gui/settings_dialog.py" line="404" />
         <source>Preferences</source>
         <translation>Preferencje</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="384" />
+        <location filename="../app/gui/settings_dialog.py" line="407" />
         <source>General</source>
         <translation>Ogólne</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="384" />
+        <location filename="../app/gui/settings_dialog.py" line="407" />
         <source>Files</source>
         <translation>Pliki</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="384" />
+        <location filename="../app/gui/settings_dialog.py" line="407" />
         <source>Metadata and cover art</source>
         <translation>Metadane i okładki</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="385" />
+        <location filename="../app/gui/settings_dialog.py" line="408" />
         <source>Subtitles</source>
         <translation>Napisy</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="385" />
+        <location filename="../app/gui/settings_dialog.py" line="408" />
         <source>Network and FFmpeg</source>
         <translation>Sieć i FFmpeg</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="385" />
+        <location filename="../app/gui/settings_dialog.py" line="408" />
         <source>Diagnostics</source>
         <translation>Diagnostyka</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="389" />
+        <location filename="../app/gui/settings_dialog.py" line="413" />
         <source>Cancel</source>
         <translation>Anuluj</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="390" />
+        <location filename="../app/gui/settings_dialog.py" line="414" />
         <source>Save</source>
         <translation>Zapisz</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="392" />
+        <location filename="../app/gui/settings_dialog.py" line="416" />
         <source>Version and dependencies</source>
         <translation>Wersja i zależności</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="394" />
+        <location filename="../app/gui/settings_dialog.py" line="418" />
         <source>About {0}</source>
         <translation>O programie {0}</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="396" />
+        <location filename="../app/gui/settings_dialog.py" line="420" />
         <source>Attach this to a bug report. Paths and versions only; nothing personal.</source>
         <translation>Dołącz to do zgłoszenia błędu. Tylko ścieżki i wersje, nic osobistego.</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="400" />
+        <location filename="../app/gui/settings_dialog.py" line="424" />
         <source>Appearance</source>
         <translation>Wygląd</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="401" />
+        <location filename="../app/gui/settings_dialog.py" line="425" />
         <source>Theme:</source>
         <translation>Motyw:</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="402" />
+        <location filename="../app/gui/settings_dialog.py" line="426" />
         <source>Language:</source>
         <translation>Język:</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="404" />
+        <location filename="../app/gui/settings_dialog.py" line="428" />
         <source>Changes apply immediately. Cancelling restores the previous choice.</source>
         <translation>Zmiany działają natychmiast. Anulowanie przywraca poprzedni wybór.</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="406" />
+        <location filename="../app/gui/settings_dialog.py" line="430" />
         <source>Downloading</source>
         <translation>Pobieranie</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="407" />
+        <location filename="../app/gui/settings_dialog.py" line="431" />
         <source>Download folder:</source>
         <translation>Katalog pobrań:</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="408" />
-        <location filename="../app/gui/settings_dialog.py" line="480" />
-        <location filename="../app/gui/settings_dialog.py" line="488" />
+        <location filename="../app/gui/settings_dialog.py" line="432" />
+        <location filename="../app/gui/settings_dialog.py" line="504" />
+        <location filename="../app/gui/settings_dialog.py" line="512" />
         <source>Choose…</source>
         <translation>Wybierz…</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="409" />
+        <location filename="../app/gui/settings_dialog.py" line="433" />
         <source>Choose destination folder</source>
         <translation>Wybierz katalog docelowy</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="410" />
+        <location filename="../app/gui/settings_dialog.py" line="434" />
         <source>Default mode:</source>
         <translation>Domyślny tryb:</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="411" />
+        <location filename="../app/gui/settings_dialog.py" line="435" />
         <source>Default quality:</source>
         <translation>Domyślna jakość:</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="412" />
+        <location filename="../app/gui/settings_dialog.py" line="436" />
         <source>Default video container:</source>
         <translation>Domyślny kontener wideo:</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="413" />
+        <location filename="../app/gui/settings_dialog.py" line="437" />
         <source>Default audio format:</source>
         <translation>Domyślny format audio:</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="415" />
+        <location filename="../app/gui/settings_dialog.py" line="439" />
         <source>Automatic mode — download at once, without the format window</source>
         <translation>Tryb automatyczny — pobieraj od razu, bez okna wyboru formatu</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="416" />
+        <location filename="../app/gui/settings_dialog.py" line="440" />
         <source>Start downloading as soon as items are queued</source>
         <translation>Startuj pobieranie zaraz po dodaniu do kolejki</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="417" />
+        <location filename="../app/gui/settings_dialog.py" line="441" />
         <source>Verbose log (diagnostics)</source>
         <translation>Szczegółowy dziennik (diagnostyka)</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="419" />
+        <location filename="../app/gui/settings_dialog.py" line="443" />
         <source>Ready-made patterns:</source>
         <translation>Gotowe schematy:</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="420" />
+        <location filename="../app/gui/settings_dialog.py" line="444" />
         <source>File name:</source>
         <translation>Nazwa pliku:</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="422" />
+        <location filename="../app/gui/settings_dialog.py" line="446" />
         <source>yt-dlp fields such as %(title)s, %(id)s, %(uploader)s, %(ext)s.</source>
         <translation>Pola yt-dlp, m.in. %(title)s, %(id)s, %(uploader)s, %(ext)s.</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="423" />
+        <location filename="../app/gui/settings_dialog.py" line="447" />
         <source>Playlists</source>
         <translation>Playlisty</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="424" />
+        <location filename="../app/gui/settings_dialog.py" line="448" />
         <source>Create a separate folder for playlists</source>
         <translation>Twórz osobny katalog dla playlist</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="425" />
+        <location filename="../app/gui/settings_dialog.py" line="449" />
         <source>Number playlist files</source>
         <translation>Numeruj pliki playlisty</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="427" />
+        <location filename="../app/gui/settings_dialog.py" line="451" />
         <source>Add the playlist position before the file name</source>
         <translation>Dodawaj numer pozycji playlisty przed nazwą pliku</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="429" />
+        <location filename="../app/gui/settings_dialog.py" line="453" />
         <source>The playlist name is only used as a folder — never as part of the file name.</source>
         <translation>Nazwa playlisty służy wyłącznie jako katalog — nigdy jako część nazwy pliku.</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="431" />
+        <location filename="../app/gui/settings_dialog.py" line="455" />
         <source>Limit file names to ASCII characters</source>
         <translation>Ogranicz nazwy plików do znaków ASCII</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="432" />
+        <location filename="../app/gui/settings_dialog.py" line="456" />
         <source>Overwrite existing files</source>
         <translation>Nadpisuj istniejące pliki</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="434" />
+        <location filename="../app/gui/settings_dialog.py" line="458" />
         <source>Download history</source>
         <translation>Historia pobrań</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="435" />
+        <location filename="../app/gui/settings_dialog.py" line="459" />
         <source>Stored records:</source>
         <translation>Zapisane wpisy:</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="437" />
+        <location filename="../app/gui/settings_dialog.py" line="461" />
         <source>Clear history</source>
         <translation>Wyczyść historię</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="438" />
+        <location filename="../app/gui/settings_dialog.py" line="462" />
         <source>Downloaded files will not be deleted.</source>
         <translation>Pobrane pliki nie zostaną usunięte.</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="440" />
+        <location filename="../app/gui/settings_dialog.py" line="464" />
         <source>Save tags (title, author, date, description)</source>
         <translation>Zapisuj tagi (tytuł, autor, data, opis)</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="441" />
+        <location filename="../app/gui/settings_dialog.py" line="465" />
         <source>Save chapters</source>
         <translation>Zapisz rozdziały</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="442" />
+        <location filename="../app/gui/settings_dialog.py" line="466" />
         <source>Embed cover art in the file</source>
         <translation>Osadzaj okładkę w pliku</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="443" />
+        <location filename="../app/gui/settings_dialog.py" line="467" />
         <source>Supported containers: MP3, M4A/MP4, MKV/MKA, OPUS, FLAC.</source>
         <translation>Obsługiwane kontenery: MP3, M4A/MP4, MKV/MKA, OPUS, FLAC.</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="444" />
+        <location filename="../app/gui/settings_dialog.py" line="468" />
         <source>Also save cover art as a separate image</source>
         <translation>Zapisuj okładkę także jako osobny obrazek</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="446" />
+        <location filename="../app/gui/settings_dialog.py" line="470" />
         <source>Split “Artist - Title” into separate tags (audio mode)</source>
         <translation>Rozbijaj „Artysta - Tytuł” na osobne tagi (tryb audio)</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="447" />
+        <location filename="../app/gui/settings_dialog.py" line="471" />
         <source>Save full metadata next to the file (.info.json)</source>
         <translation>Zapisuj pełne metadane obok pliku (.info.json)</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="448" />
+        <location filename="../app/gui/settings_dialog.py" line="472" />
         <source>Save the description to a .description file</source>
         <translation>Zapisuj opis do pliku .description</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="449" />
+        <location filename="../app/gui/settings_dialog.py" line="473" />
         <source>SponsorBlock — cut out segments</source>
         <translation>SponsorBlock — wycinanie fragmentów</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="451" />
+        <location filename="../app/gui/settings_dialog.py" line="475" />
         <source>Sponsors</source>
         <translation>Sponsorzy</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="451" />
+        <location filename="../app/gui/settings_dialog.py" line="475" />
         <source>Self-promotion</source>
         <translation>Autopromocja</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="451" />
+        <location filename="../app/gui/settings_dialog.py" line="475" />
         <source>Intro</source>
         <translation>Intro</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="451" />
+        <location filename="../app/gui/settings_dialog.py" line="475" />
         <source>Outro</source>
         <translation>Outro</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="452" />
+        <location filename="../app/gui/settings_dialog.py" line="476" />
         <source>Subscription reminders</source>
         <translation>Prośby o subskrypcję</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="452" />
+        <location filename="../app/gui/settings_dialog.py" line="476" />
         <source>Non-music sections</source>
         <translation>Fragmenty pozamuzyczne</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="456" />
+        <location filename="../app/gui/settings_dialog.py" line="480" />
         <source>Download subtitles by default</source>
         <translation>Domyślnie pobieraj napisy</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="457" />
+        <location filename="../app/gui/settings_dialog.py" line="481" />
         <source>Allow automatically generated subtitles</source>
         <translation>Dopuszczaj napisy generowane automatycznie</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="458" />
+        <location filename="../app/gui/settings_dialog.py" line="482" />
         <source>Embed subtitles in the video file</source>
         <translation>Osadzaj napisy w pliku wideo</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="459" />
+        <location filename="../app/gui/settings_dialog.py" line="483" />
         <source>Preferred languages:</source>
         <translation>Preferowane języki:</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="462" />
+        <location filename="../app/gui/settings_dialog.py" line="486" />
         <source>Comma-separated language codes; “all” downloads everything available. The download window narrows the list to subtitles the item actually has.</source>
         <translation>Kody języków po przecinku; „all” pobiera wszystkie dostępne. Okno pobierania zawęża listę do napisów, które materiał faktycznie ma.</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="465" />
+        <location filename="../app/gui/settings_dialog.py" line="489" />
         <source>Speed limit:</source>
         <translation>Limit prędkości:</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="466" />
+        <location filename="../app/gui/settings_dialog.py" line="490" />
         <source>no limit, e.g. 2M or 500K</source>
         <translation>bez limitu, np. 2M albo 500K</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="467" />
+        <location filename="../app/gui/settings_dialog.py" line="491" />
         <source>Parallel fragments:</source>
         <translation>Równoległe fragmenty:</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="468" />
+        <location filename="../app/gui/settings_dialog.py" line="492" />
         <source>yt-dlp retries:</source>
         <translation>Ponowienia yt-dlp:</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="469" />
+        <location filename="../app/gui/settings_dialog.py" line="493" />
         <source>Job retries:</source>
         <translation>Ponowienia zadania:</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="470" />
+        <location filename="../app/gui/settings_dialog.py" line="494" />
         <source>Delay between job retries (s):</source>
         <translation>Odstęp między ponowieniami (s):</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="472" />
+        <location filename="../app/gui/settings_dialog.py" line="496" />
         <source>The first value applies inside a single yt-dlp attempt (HTTP, fragments). The second repeats the whole job; only after using it up does an item move to the Failed tab.</source>
         <translation>Pierwsza wartość działa wewnątrz jednej próby yt-dlp (HTTP, fragmenty). Druga powtarza całe zadanie; dopiero jej wyczerpanie przenosi pozycję do zakładki Błędy.</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="475" />
+        <location filename="../app/gui/settings_dialog.py" line="499" />
         <source>Proxy:</source>
         <translation>Proxy:</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="476" />
+        <location filename="../app/gui/settings_dialog.py" line="500" />
         <source>e.g. socks5://127.0.0.1:1080</source>
         <translation>np. socks5://127.0.0.1:1080</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="477" />
+        <location filename="../app/gui/settings_dialog.py" line="501" />
         <source>Cookies from browser:</source>
         <translation>Ciasteczka z przeglądarki:</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="478" />
+        <location filename="../app/gui/settings_dialog.py" line="502" />
         <source>Cookie file:</source>
         <translation>Plik ciasteczek:</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="479" />
+        <location filename="../app/gui/settings_dialog.py" line="503" />
         <source>cookies.txt file (optional)</source>
         <translation>plik cookies.txt (opcjonalnie)</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="481" />
-        <source>Choose cookies file</source>
+        <location filename="../app/gui/settings_dialog.py" line="505" />
+        <source>Choose cookie file</source>
         <translation>Wybierz plik ciasteczek</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="483" />
+        <location filename="../app/gui/settings_dialog.py" line="507" />
         <source>Cookies allow downloading private or age-restricted items and items that require signing in.</source>
         <translation>Ciasteczka pozwalają pobierać materiały prywatne, z ograniczeniem wieku oraz wymagające zalogowania.</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="485" />
+        <location filename="../app/gui/settings_dialog.py" line="509" />
         <source>FFmpeg</source>
         <translation>FFmpeg</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="486" />
+        <location filename="../app/gui/settings_dialog.py" line="510" />
         <source>FFmpeg folder:</source>
         <translation>Katalog FFmpeg:</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="487" />
+        <location filename="../app/gui/settings_dialog.py" line="511" />
         <source>detect automatically</source>
         <translation>wykryj automatycznie</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="489" />
+        <location filename="../app/gui/settings_dialog.py" line="513" />
         <source>Choose FFmpeg location</source>
         <translation>Wskaż lokalizację FFmpeg</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="490" />
+        <location filename="../app/gui/settings_dialog.py" line="514" />
         <source>Status:</source>
         <translation>Stan:</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="512" />
+        <location filename="../app/gui/settings_dialog.py" line="536" />
         <source>— do not use —</source>
         <translation>— nie używaj —</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="515" />
+        <location filename="../app/gui/settings_dialog.py" line="539" />
         <source>— custom —</source>
         <translation>— własny —</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="517" />
+        <location filename="../app/gui/settings_dialog.py" line="541" />
         <source>Title</source>
         <translation>Tytuł</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="517" />
+        <location filename="../app/gui/settings_dialog.py" line="541" />
         <source>Title [ID]</source>
         <translation>Tytuł [ID]</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="517" />
+        <location filename="../app/gui/settings_dialog.py" line="541" />
         <source>Author - Title</source>
         <translation>Autor - Tytuł</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="518" />
+        <location filename="../app/gui/settings_dialog.py" line="542" />
         <source>Date - Title</source>
         <translation>Data - Tytuł</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="666" />
+        <location filename="../app/gui/settings_dialog.py" line="690" />
         <source>Cookie file</source>
         <translation>Plik ciasteczek</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="667" />
+        <location filename="../app/gui/settings_dialog.py" line="691" />
         <source>Text files (*.txt);;All files (*)</source>
         <translation>Pliki tekstowe (*.txt);;Wszystkie pliki (*)</translation>
     </message>
     <message>
-        <location filename="../app/gui/settings_dialog.py" line="736" />
+        <location filename="../app/gui/settings_dialog.py" line="760" />
         <source>Choose folder</source>
         <translation>Wybierz katalog</translation>
     </message>

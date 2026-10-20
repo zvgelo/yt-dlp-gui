@@ -1,4 +1,4 @@
-"""Painting a queue item as a card, following the "main window 2" mockup.
+"""Painting a queue item as a card.
 
 A card holds a thumbnail with a duration badge, a title and a metadata row
 (`22:08 - 113.4 MB - MP4 - 1080p - Author`), plus a progress bar described as

@@ -59,15 +59,22 @@ def test_quality_respects_the_chosen_container(formats):
 
 def test_size_combines_video_and_audio(formats):
     option = next(o for o in fs.quality_options(formats, 'mp4') if o.value == 1080)
-    # 137 (60.1 MB) + najlepsze audio 251 (5.2 MB)
-    assert option.filesize == 60_100_000 + 5_200_000
+    # 137 (60.1 MB) + 140 (4.6 MB): the MP4 selector asks for ba[ext=m4a]
+    assert option.filesize == 60_100_000 + 4_600_000
+    assert 'AAC' in option.details and 'Opus' not in option.details
+
+
+def test_webm_describes_the_opus_track(formats):
+    option = next(o for o in fs.quality_options(formats, 'webm') if o.value == 1080)
+    assert option.filesize == 64_700_000 + 5_200_000
+    assert 'Opus' in option.details
 
 
 def test_advanced_variants_combine_streams(formats):
     variants = fs.video_variants(formats)
     selectors = {v.selector for v in variants}
-    assert '303+251' in selectors  # video-only + najlepsze audio
-    assert '18' in selectors  # muxed zostaje samo
+    assert '303+251' in selectors  # video-only + the best audio
+    assert '18' in selectors  # a muxed stream stays on its own
     assert any('60 FPS' in v.label and 'VP9' in v.label for v in variants)
 
 
@@ -116,6 +123,9 @@ def test_video_selector(quality, container, expected_parts):
     (QUALITY_BEST, 'm4a', 'ba[ext=m4a]/ba/b'),
     (QUALITY_BEST, 'opus', 'ba[acodec=opus]/ba/b'),
     (192, 'mp3', 'ba[abr<=192]/ba/b'),
+    # The limit binds the preferred codec too; a matching stream is only copied
+    (96, 'opus', 'ba[acodec=opus][abr<=96]/ba[abr<=96]/ba/b'),
+    (128, 'm4a', 'ba[ext=m4a][abr<=128]/ba[abr<=128]/ba/b'),
     (QUALITY_WORST, 'mp3', 'wa/w'),
 ])
 def test_audio_selector(quality, audio_format, expected):

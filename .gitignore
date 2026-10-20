@@ -44,8 +44,8 @@ htmlcov/
 Thumbs.db
 desktop.ini
 # Crash dumps: a Qt application that dies can leave one in the working directory
-core
-core.*
+/core
+core.[0-9]*
 *.core
 
 # Downloaded files and yt-dlp artifacts

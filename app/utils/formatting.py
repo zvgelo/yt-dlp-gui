@@ -75,17 +75,3 @@ def extract_urls(text: str) -> list[str]:
     return list(dict.fromkeys(url.rstrip('.,);]') for url in found))
 
 
-def plural_items(count: int) -> str:
-    """Polish plural form for the item counter.
-
-    Kept for the tests that assert the grammar; the UI uses Qt plural forms.
-    """
-    if count == 1:
-        return 'pozycja'
-    if 2 <= count % 10 <= 4 and not 12 <= count % 100 <= 14:
-        return 'pozycje'
-    return 'pozycji'
-
-
-def elide(text: str, limit: int) -> str:
-    return text if len(text) <= limit else text[: max(1, limit - 1)] + '…'

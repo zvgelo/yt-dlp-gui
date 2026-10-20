@@ -291,7 +291,7 @@ def test_nested_playlists_are_flattened_as_a_stream():
     assert info.entries_complete is True
 
 
-# ----------------------------------------------------------- opcje yt-dlp
+# ----------------------------------------------------------- yt-dlp options
 
 
 def test_downloading_uses_lazy_playlist():

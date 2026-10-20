@@ -84,15 +84,33 @@ Copy-Item (Join-Path $Root 'README.md') (Join-Path $AppDir 'README.md')
 Write-Step 'smoke-testing the bundle'
 $exe = Join-Path $AppDir 'yt-dlp-gui.exe'
 if (-not (Test-Path $exe)) { Fail "the executable is missing at $exe" }
-& $exe --version
-if ($LASTEXITCODE -ne 0) { Fail 'the executable does not report its version' }
-& $exe --self-test
-if ($LASTEXITCODE -ne 0) { Fail 'the self-test failed' }
+# The executable is a windowed (GUI-subsystem) program: `& $exe` neither waits
+# for it nor sets $LASTEXITCODE, so it is started explicitly and waited for.
+# A throw-away profile keeps the check from writing into the builder's own
+# settings and history.
+$SmokeProfile = Join-Path $BuildDir 'smoke-profile'
+if (Test-Path $SmokeProfile) { Remove-Item -Recurse -Force $SmokeProfile }
+New-Item -ItemType Directory -Path $SmokeProfile -Force | Out-Null
+$savedAppData, $savedLocalAppData = $env:APPDATA, $env:LOCALAPPDATA
+$env:APPDATA = $SmokeProfile
+$env:LOCALAPPDATA = $SmokeProfile
+try {
+    foreach ($check in @('--version', '--self-test')) {
+        $process = Start-Process -FilePath $exe -ArgumentList $check -Wait -PassThru -NoNewWindow
+        if ($process.ExitCode -ne 0) { Fail "$check exited with code $($process.ExitCode)" }
+    }
+} finally {
+    $env:APPDATA, $env:LOCALAPPDATA = $savedAppData, $savedLocalAppData
+}
 
 Write-Step 'creating the portable ZIP'
 New-Item -ItemType Directory -Path $DistDir -Force | Out-Null
+# Only this build's files may end up hashed and in the manifest; an artifact
+# left over from an earlier version would otherwise be described as current
+Get-ChildItem $DistDir -File |
+    Where-Object { $_.Extension -in '.zip', '.exe', '.sha256' -or $_.Name -in 'SHA256SUMS.txt', 'release-manifest.json' } |
+    Remove-Item -Force
 $ZipPath = Join-Path $DistDir $ZipName
-if (Test-Path $ZipPath) { Remove-Item -Force $ZipPath }
 Compress-Archive -Path $AppDir -DestinationPath $ZipPath -CompressionLevel Optimal
 
 Write-Step 'building the installer'

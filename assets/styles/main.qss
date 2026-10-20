@@ -224,7 +224,7 @@ QLabel#TitleLabel { color: {{TEXT_PRIMARY}}; font-size: 16px; font-weight: 600; 
 
 /* ---------------------------------------------------------- status states */
 
-QLabel#StatusOk, QLabel#StatusSuccess { color: {{SUCCESS}}; }
+QLabel#StatusOk { color: {{SUCCESS}}; }
 QLabel#StatusWarn { color: {{WARNING}}; }
 QLabel#StatusError { color: {{ERROR}}; }
 QLabel#StatusInfo { color: {{INFO}}; }
@@ -328,25 +328,6 @@ QDockWidget::title {
     padding: 6px 10px;
     text-align: left;
 }
-
-/* ---------------------------------------------------------------progress */
-
-QProgressBar {
-    border: 1px solid {{BORDER}};
-    border-radius: 4px;
-    background: {{PROGRESS_TRACK}};
-    color: {{TEXT_PRIMARY}};
-    min-height: 8px;
-    text-align: center;
-}
-QProgressBar::chunk {
-    background: {{ACCENT}};
-    border-radius: 3px;
-    margin: 0px;
-}
-QProgressBar[state="processing"]::chunk { background: {{WARNING}}; }
-QProgressBar[state="error"]::chunk { background: {{ERROR}}; }
-QProgressBar:disabled { color: {{TEXT_DISABLED}}; }
 
 /* ------------------------------------------------------------ scrollbars */
 

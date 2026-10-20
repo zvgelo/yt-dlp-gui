@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="380" viewBox="0 0 1200 380" role="img" aria-labelledby="title desc">
+  <title id="title">yt-dlp GUI</title>
+  <desc id="desc">A desktop app for yt-dlp: paste a link, pick a quality and the queue downloads the file. A pasted link turns into a queue card with a progress bar and then a finished MP4.</desc>
+
+  <!-- Colours are the Dark theme tokens from app/theme/themes.py -->
+  <rect width="1200" height="380" rx="24" fill="#16181c"/>
+
+  <g id="title-block" transform="translate(64 0)" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', sans-serif">
+    <!-- brand mark, same geometry as assets/icons/app_logo.svg -->
+    <g transform="translate(0 70) scale(0.875)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M32 9 V30" stroke="#f5f6f8" stroke-width="7"/>
+      <path d="M18.5 28 L32 42 L45.5 28 Z" fill="#43a047" stroke="#43a047" stroke-width="5"/>
+      <path d="M12 41 V50 A4 4 0 0 0 16 54 H48 A4 4 0 0 0 52 50 V41" stroke="#f5f6f8" stroke-width="6"/>
+    </g>
+    <text x="72" y="113" font-size="22" font-weight="600" fill="#8b929c" letter-spacing="2">DESKTOP APP FOR YT-DLP</text>
+
+    <text x="0" y="196" font-size="72" font-weight="700" fill="#f5f6f8">yt-dlp GUI</text>
+    <text x="0" y="246" font-size="27" fill="#c9ced6">Paste a link. Pick a quality.</text>
+    <text x="0" y="282" font-size="27" fill="#c9ced6">The queue does the rest.</text>
+
+    <text x="0" y="334" font-size="18" fill="#8b929c" font-family="ui-monospace, SFMono-Regular, Menlo, 'Noto Sans Mono', monospace">Linux · Windows · English / Polish · Unlicense</text>
+  </g>
+
+  <!-- The proof: what one link becomes, drawn like the app's queue cards -->
+  <g id="queue" transform="translate(600 46)" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', sans-serif">
+    <!-- 1. the pasted link -->
+    <rect x="0" y="0" width="536" height="56" rx="12" fill="#1e2126" stroke="#30353d"/>
+    <rect x="12" y="10" width="112" height="36" rx="8" fill="#43a047"/>
+    <text x="68" y="34" font-size="18" font-weight="600" fill="#ffffff" text-anchor="middle">Paste link</text>
+    <text x="142" y="35" font-size="18" fill="#8b929c" font-family="ui-monospace, SFMono-Regular, Menlo, 'Noto Sans Mono', monospace">https://example.com/watch?v=…</text>
+
+    <path d="M268 64 V82" stroke="#3a4049" stroke-width="2" stroke-dasharray="4 4"/>
+
+    <!-- 2. downloading -->
+    <rect x="0" y="90" width="536" height="104" rx="12" fill="#1e2126" stroke="#30353d"/>
+    <rect x="16" y="106" width="128" height="72" rx="8" fill="#2b5876"/>
+    <path d="M70 128 V156 L94 142 Z" fill="#ffffff" fill-opacity="0.85"/>
+    <text x="162" y="132" font-size="21" font-weight="600" fill="#f5f6f8">How sourdough works</text>
+    <rect x="162" y="146" width="300" height="6" rx="3" fill="#30353d"/>
+    <rect x="162" y="146" width="186" height="6" rx="3" fill="#43a047"/>
+    <text x="520" y="153" font-size="20" font-weight="700" fill="#4caf50" text-anchor="end">62%</text>
+    <text x="162" y="178" font-size="18" fill="#8b929c">303 MB / 488 MB · 8.0 MB/s · ETA 0:23</text>
+
+    <path d="M268 202 V220" stroke="#3a4049" stroke-width="2" stroke-dasharray="4 4"/>
+
+    <!-- 3. the finished file -->
+    <rect x="0" y="228" width="536" height="64" rx="12" fill="#1e2126" stroke="#30353d"/>
+    <path d="M22 262 L32 272 L50 250" fill="none" stroke="#2e9e52" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="66" y="267" font-size="20" fill="#f5f6f8">How sourdough works.mp4</text>
+    <text x="520" y="267" font-size="18" fill="#8b929c" text-anchor="end">1080p · cover · chapters</text>
+  </g>
+</svg>

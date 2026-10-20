@@ -30,6 +30,7 @@ from .. import APP_TITLE
 from ..core import diagnostics
 from ..core import format_service as fs
 from ..core.models import MediaKind
+from ..core.ytdlp_service import FFmpegStatus
 from ..i18n import TranslationManager
 from ..settings import DEFAULT_OUTTMPL, AppSettings
 from ..theme import ThemeManager
@@ -57,7 +58,7 @@ OUTTMPL_PRESETS: tuple[str, ...] = (
 
 class SettingsDialog(QDialog):
     def __init__(self, settings: AppSettings, theme_manager: ThemeManager,
-                 translations: TranslationManager, ffmpeg_message: str = '', parent=None,
+                 translations: TranslationManager, ffmpeg: FFmpegStatus | None = None, parent=None,
                  *, history_count: int = 0, on_clear_history=None):
         super().__init__(parent)
         self._history_count = history_count
@@ -68,13 +69,17 @@ class SettingsDialog(QDialog):
         # Remembered in case of Cancel, because the preview is live
         self._initial_theme = theme_manager.key
         self._initial_language = translations.code
-        self._ffmpeg_message = ffmpeg_message
+        self._ffmpeg = ffmpeg
 
         self.setMinimumSize(660, 580)
         self._build()
         self._link_labels()
         self._load()
         self.retranslate_ui()
+        # The combos are only filled by retranslate_ui(), so the saved values
+        # can be selected after it; selecting them in _load() hit empty combos
+        # and every Save quietly reset these defaults
+        self._apply_saved_selection()
 
     def _link_labels(self) -> None:
         """Make every form label the buddy of the control it describes.
@@ -105,7 +110,9 @@ class SettingsDialog(QDialog):
         layout.setSpacing(12)
 
         self.tabs = QTabWidget()
-        self.tabs.setAccessibleName(self.tr('Settings sections'))
+        # Every section stays visible: with scroll buttons the last tab
+        # (Diagnostics) hid behind arrows at the default width
+        self.tabs.setUsesScrollButtons(False)
         self.tabs.addTab(self._tab_general(), '')
         self.tabs.addTab(self._tab_files(), '')
         self.tabs.addTab(self._tab_metadata(), '')
@@ -126,7 +133,6 @@ class SettingsDialog(QDialog):
 
     def _tab_general(self) -> QWidget:
         page, form = _form_page()
-        self._form_general = form
 
         self.appearance_section = _section()
         form.addRow(self.appearance_section)
@@ -373,18 +379,36 @@ class SettingsDialog(QDialog):
     def _copy_diagnostics(self) -> None:
         QApplication.clipboard().setText(self.about_text.toPlainText())
         self.copy_diagnostics_button.setText(self.tr('Copied'))
-        QTimer.singleShot(1500, lambda: self.copy_diagnostics_button.setText(
+        # The button is the context: a dialog closed within the delay takes
+        # the pending call with it instead of touching a deleted widget
+        QTimer.singleShot(1500, self.copy_diagnostics_button, lambda: self.copy_diagnostics_button.setText(
             self.tr('Copy system information')))
 
     # --------------------------------------------------------------- text
 
+    def _fit_tabs(self) -> None:
+        """Keep the dialog wide enough for every section tab in the current language."""
+        margins = self.layout().contentsMargins() if self.layout() else None
+        extra = (margins.left() + margins.right()) if margins else 0
+        bar = self.tabs.tabBar()
+        # The stylesheet adds the tab padding; measure after it has applied
+        bar.ensurePolished()
+        needed = sum(bar.tabSizeHint(index).width() for index in range(bar.count())) + extra + 8
+        self.setMinimumWidth(max(660, needed))
+
+    def showEvent(self, event) -> None:
+        self._fit_tabs()
+        super().showEvent(event)
+
     def retranslate_ui(self) -> None:
         self.setWindowTitle(self.tr('Preferences'))
+        self.tabs.setAccessibleName(self.tr('Settings sections'))
         for index, text in enumerate((
             self.tr('General'), self.tr('Files'), self.tr('Metadata and cover art'),
             self.tr('Subtitles'), self.tr('Network and FFmpeg'), self.tr('Diagnostics'),
         )):
             self.tabs.setTabText(index, text)
+        self._fit_tabs()
 
         self._cancel_button.setText(self.tr('Cancel'))
         self._save_button.setText(self.tr('Save'))
@@ -478,7 +502,7 @@ class SettingsDialog(QDialog):
         self.cookies_file_row_label.setText(self.tr('Cookie file:'))
         self.cookies_file_edit.setPlaceholderText(self.tr('cookies.txt file (optional)'))
         self.cookies_browse.setText(self.tr('Choose…'))
-        self.cookies_browse.setAccessibleName(self.tr('Choose cookies file'))
+        self.cookies_browse.setAccessibleName(self.tr('Choose cookie file'))
         self.cookies_hint.setText(
             self.tr('Cookies allow downloading private or age-restricted items '
                     'and items that require signing in.'))
@@ -488,9 +512,9 @@ class SettingsDialog(QDialog):
         self.ffmpeg_browse.setText(self.tr('Choose…'))
         self.ffmpeg_browse.setAccessibleName(self.tr('Choose FFmpeg location'))
         self.ffmpeg_status_label.setText(self.tr('Status:'))
-        self.ffmpeg_status.setText(self._ffmpeg_message)
-        self.ffmpeg_status.setObjectName(
-            'StatusOk' if self._ffmpeg_message.startswith('FFmpeg') else 'StatusWarn')
+        self.ffmpeg_status.setText(labels.ffmpeg_status_text(self._ffmpeg))
+        available = self._ffmpeg is not None and self._ffmpeg.available
+        self.ffmpeg_status.setObjectName('StatusOk' if available else 'StatusWarn')
 
         self._reload_combos()
 
@@ -516,14 +540,14 @@ class SettingsDialog(QDialog):
                 + [(value, f'{name}   ({value})') for value, name in zip(OUTTMPL_PRESETS, (
                     self.tr('Title'), self.tr('Title [ID]'), self.tr('Author - Title'),
                     self.tr('Date - Title')), strict=True)])
-        _select(self.theme_combo_entries(), self.theme_combo, self._themes.key)
-        _select(None, self.language_combo, self._translations.code)
+        self._reload_theme_combo()
+        _select(self.theme_combo, self._themes.key)
+        _select(self.language_combo, self._translations.code)
 
-    def theme_combo_entries(self):
+    def _reload_theme_combo(self) -> None:
         """Theme names are translated, but their identifiers stay stable."""
-        entries = [(theme.key, labels.theme_name(theme.key)) for theme in self._themes.themes]
-        _refill(self.theme_combo, entries)
-        return entries
+        _refill(self.theme_combo,
+                [(theme.key, labels.theme_name(theme.key)) for theme in self._themes.themes])
 
     # -------------------------------------------------------------- data
 
@@ -564,7 +588,6 @@ class SettingsDialog(QDialog):
         self.proxy_edit.setText(s.proxy)
         self.cookies_file_edit.setText(s.cookies_file)
         self.ffmpeg_edit.setText(s.ffmpeg_location)
-        self._pending = s
 
     def _apply_saved_selection(self) -> None:
         """Restore the combo selections after a rebuild, e.g. a language change."""
@@ -636,8 +659,9 @@ class SettingsDialog(QDialog):
     def _preview_language(self) -> None:
         code = self.language_combo.currentData()
         if code:
+            # _refill keeps each combo's current choice across the rebuild,
+            # including edits the user has not saved yet
             self._translations.set_language(code, persist=False)
-            self._apply_saved_selection()
 
     def accept(self) -> None:
         theme_key = self.theme_combo.currentData()
@@ -724,7 +748,7 @@ def _refill(combo: QComboBox, entries) -> None:
     combo.blockSignals(False)
 
 
-def _select(_entries, combo: QComboBox, value) -> None:
+def _select(combo: QComboBox, value) -> None:
     index = combo.findData(value)
     if index >= 0:
         combo.blockSignals(True)

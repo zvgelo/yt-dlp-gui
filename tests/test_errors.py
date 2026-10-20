@@ -6,7 +6,7 @@ import errno
 
 import pytest
 
-from app.core.errors import AppErrorCode, describe, shorten
+from app.core.errors import AppErrorCode, describe, describe_messages, shorten
 
 
 @pytest.fixture(scope='module')
@@ -19,6 +19,7 @@ def qapp():
     ('ERROR: Private video. Sign in if you have been granted access', AppErrorCode.PRIVATE_VIDEO),
     ('ERROR: Sign in to confirm your age', AppErrorCode.AGE_RESTRICTED),
     ('ERROR: Video unavailable', AppErrorCode.UNAVAILABLE),
+    ('ERROR: [youtube] abc: This video is unavailable', AppErrorCode.UNAVAILABLE),
     ('ERROR: The uploader has not made this video available in your country',
      AppErrorCode.GEO_RESTRICTED),
     ('ERROR: Unsupported URL: https://example.com/x', AppErrorCode.UNSUPPORTED_URL),
@@ -27,6 +28,14 @@ def qapp():
     ('ffmpeg not found. Please install or provide the path using --ffmpeg-location',
      AppErrorCode.FFMPEG_MISSING),
     ('ERROR: Unable to download webpage: <urlopen error timed out>', AppErrorCode.NETWORK_ERROR),
+    ('ERROR: [youtube] abc: This video is no longer available because the YouTube account '
+     'associated with this video has been terminated.', AppErrorCode.UNAVAILABLE),
+    ("ERROR: [youtube] abc: Sign in to confirm you're not a bot.", AppErrorCode.LOGIN_REQUIRED),
+    ('ERROR: [youtube] abc: Join this channel to get access to members-only content',
+     AppErrorCode.LOGIN_REQUIRED),
+    ('ERROR: Unable to download webpage: <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] '
+     'certificate verify failed>', AppErrorCode.SSL_ERROR),
+    ('ERROR: Unable to download webpage: Unable to connect to proxy', AppErrorCode.PROXY_ERROR),
 ])
 def test_common_errors_get_the_right_code(message, expected):
     assert describe(Exception(message)).code is expected
@@ -75,3 +84,14 @@ def test_the_gui_turns_a_code_into_a_sentence(qapp):
     # An unrecognised error shows the original yt-dlp message
     raw = labels.error_text(FriendlyError(AppErrorCode.UNKNOWN, 'a strange error'))
     assert raw == 'a strange error'
+
+
+def test_the_first_recognised_message_explains_a_result():
+    error = describe_messages(['something odd happened', 'ERROR: Private video. Sign in'])
+    assert error.code is AppErrorCode.PRIVATE_VIDEO
+
+
+def test_an_unrecognised_result_keeps_its_first_message():
+    error = describe_messages(['something odd happened', 'and something else'])
+    assert error.code is AppErrorCode.UNKNOWN
+    assert error.details == 'something odd happened'

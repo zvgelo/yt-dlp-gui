@@ -202,18 +202,47 @@ def error_message(code: AppErrorCode) -> str:
     }.get(code, '')
 
 
+def error_category_label(category) -> str:
+    """The group a problem belongs to, as shown in the error details."""
+    from ..core.errors import ErrorCategory
+
+    return {
+        ErrorCategory.NETWORK: translate('Labels', 'Network'),
+        ErrorCategory.HTTP: translate('Labels', 'Server'),
+        ErrorCategory.EXTRACTOR: translate('Labels', 'Site or address'),
+        ErrorCategory.AUTH: translate('Labels', 'Sign-in required'),
+        ErrorCategory.GEO: translate('Labels', 'Region'),
+        ErrorCategory.FORMAT: translate('Labels', 'Format'),
+        ErrorCategory.FFMPEG: translate('Labels', 'FFmpeg'),
+        ErrorCategory.FILESYSTEM: translate('Labels', 'Files and folders'),
+        ErrorCategory.PLAYLIST_ENUMERATION: translate('Labels', 'Playlist'),
+    }.get(category, translate('Labels', 'Other'))
+
+
+def ffmpeg_status_text(status) -> str:
+    """The FFmpeg line in Preferences, from the probe rather than its log text."""
+    if status is None:
+        return ''
+    if not status.available:
+        return translate('Labels', 'FFmpeg was not found. Merging video with audio, audio conversion, '
+                                   'cover art and subtitle embedding are unavailable.')
+    if status.version:
+        return translate('Labels', 'FFmpeg {0}').format(status.version)
+    return translate('Labels', 'FFmpeg is available')
+
+
 def error_hint(code: AppErrorCode) -> str:
     return {
         AppErrorCode.PRIVATE_VIDEO: translate('Labels', 'It needs an account with access — try browser cookies.'),
-        AppErrorCode.AGE_RESTRICTED: translate('Labels', 'Enable browser cookies in Preferences → Network.'),
-        AppErrorCode.LOGIN_REQUIRED: translate('Labels', 'Enable browser cookies in Preferences → Network.'),
-        AppErrorCode.GEO_RESTRICTED: translate('Labels', 'A proxy set in Preferences → Network may help.'),
+        AppErrorCode.AGE_RESTRICTED: translate('Labels', 'Enable browser cookies in Preferences → Network and FFmpeg.'),
+        AppErrorCode.LOGIN_REQUIRED: translate('Labels', 'Enable browser cookies in Preferences → Network and FFmpeg.'),
+        AppErrorCode.GEO_RESTRICTED: translate('Labels', 'A proxy set in Preferences → Network and FFmpeg may help.'),
         AppErrorCode.UNSUPPORTED_URL: translate('Labels', 'yt-dlp has no extractor for this site.'),
         AppErrorCode.FORMAT_UNAVAILABLE: translate('Labels', 'Pick another quality or “Best available”.'),
         AppErrorCode.NO_FORMATS: translate('Labels', 'The video may be DRM protected.'),
-        AppErrorCode.FFMPEG_MISSING: translate('Labels', 'Install FFmpeg or set its folder in Preferences → Network.'),
+        AppErrorCode.FFMPEG_MISSING: translate('Labels', 'Install FFmpeg or set its folder in Preferences → Network and FFmpeg.'),
         AppErrorCode.NETWORK_ERROR: translate('Labels', 'Check your connection and try again.'),
-        AppErrorCode.PROXY_ERROR: translate('Labels', 'Check the proxy address in Preferences → Network.'),
+        AppErrorCode.PROXY_ERROR: translate('Labels', 'Check the proxy address in Preferences → Network and FFmpeg.'),
         AppErrorCode.PERMISSION_DENIED: translate('Labels', 'Choose a different destination folder.'),
         AppErrorCode.POSTPROCESSING_FAILED: translate('Labels', 'Check whether FFmpeg is installed.'),
         AppErrorCode.MERGE_FAILED: translate('Labels', 'This usually means FFmpeg is missing or too old.'),
@@ -387,7 +416,7 @@ def failure_summary(task) -> str:
 
 
 def retry_summary(task) -> str:
-    """Opis podczas oczekiwania na automatyczne ponowienie."""
+    """Description while an automatic retry is pending."""
     from ..core.errors import AppErrorCode, FriendlyError
 
     reason = error_text(FriendlyError(task.error_code or AppErrorCode.UNKNOWN, task.error),

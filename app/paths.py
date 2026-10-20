@@ -16,7 +16,7 @@ HISTORY_FILENAME = 'history.db'
 
 
 def app_data_dir() -> Path:
-    """`~/.local/share/yt-dlp-gui` on Linux, `%APPDATA%/yt-dlp-gui` on Windows.
+    """`~/.local/share/yt-dlp-gui` on Linux, `%LOCALAPPDATA%/yt-dlp-gui` on Windows.
 
     `GenericDataLocation` is used deliberately instead of `AppDataLocation`:
     the latter appends both the organisation and the application name, and

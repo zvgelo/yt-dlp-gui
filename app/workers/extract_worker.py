@@ -16,7 +16,7 @@ class ExtractSignals(QObject):
 
 
 class ExtractWorker(QRunnable):
-    """Jedno zapytanie o metadane. Uruchamiane przez `QThreadPool`."""
+    """A single metadata request. Run by `QThreadPool`."""
 
     def __init__(self, request_id: str, url: str, service: YtDlpService,
                  owner: QObject | None = None):

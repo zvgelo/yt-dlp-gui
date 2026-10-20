@@ -2,7 +2,7 @@
 ;
 ; Driven by scripts\build_windows.ps1, which passes the version and the paths:
 ;
-;   ISCC.exe /DAppVersion=1.0.0 /DSourceDir=...\yt-dlp-gui /DOutputDir=...\dist\windows ^
+;   ISCC.exe /DAppVersion=<version> /DSourceDir=...\yt-dlp-gui /DOutputDir=...\dist\windows ^
 ;            packaging\windows\yt-dlp-gui.iss
 ;
 ; The installer only ever writes to the installation directory and the Start

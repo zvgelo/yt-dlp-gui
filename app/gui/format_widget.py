@@ -30,7 +30,7 @@ from . import labels
 
 
 class FormatWidget(QWidget):
-    """The "Download Video / Format / quality list" section from the mockup."""
+    """The "Download Video / Format / quality list" section of the download dialog."""
 
     changed = Signal()
 

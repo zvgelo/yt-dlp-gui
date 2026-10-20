@@ -27,6 +27,11 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 # Debian 11 is old enough to be portable and still has a shared libpython
 IMAGE="${YTDLP_GUI_BUILD_IMAGE:-python:3.12-bullseye}"
+# Debian 11 left LTS in August 2026 and its live security archive has started
+# losing files the index still lists (apt then fails with 404). The packages
+# are read from a fixed snapshot instead: it carries every security update up
+# to the end of LTS, and two builds of the same commit get the same libraries.
+DEBIAN_SNAPSHOT="${YTDLP_GUI_DEBIAN_SNAPSHOT:-20260830T000000Z}"
 
 ENGINE="${CONTAINER_ENGINE:-}"
 if [ -z "$ENGINE" ]; then
@@ -81,6 +86,7 @@ mkdir -p "$ROOT/dist" "$ROOT/build/runtime-cache"
 
 printf '[container] engine %s (rootless: %s)\n' "$ENGINE" "$ROOTLESS"
 printf '[container] image  %s\n' "$IMAGE"
+printf '[container] debian snapshot %s\n' "$DEBIAN_SNAPSHOT"
 printf '[container] commit %s (%s)\n' "${HOST_COMMIT:-unknown}" "$HOST_TREE_STATE"
 
 # SELinux: the checkout is never relabelled. Disabling the label check for this
@@ -98,6 +104,7 @@ printf '[container] commit %s (%s)\n' "${HOST_COMMIT:-unknown}" "$HOST_TREE_STAT
     -e YTDLP_GUI_TREE_STATE="$HOST_TREE_STATE" \
     -e YTDLP_GUI_BUILD_IMAGE="$IMAGE" \
     -e YTDLP_GUI_BUILD_IMAGE_ID="$IMAGE_ID" \
+    -e DEBIAN_SNAPSHOT="$DEBIAN_SNAPSHOT" \
     -e CHOWN_ARTIFACTS="$CHOWN_ARTIFACTS" \
     -e HOST_UID="$HOST_UID" \
     -e HOST_GID="$HOST_GID" \
@@ -105,6 +112,12 @@ printf '[container] commit %s (%s)\n' "${HOST_COMMIT:-unknown}" "$HOST_TREE_STAT
     bash -euo pipefail -c '
         echo "[container] installing build dependencies"
         export DEBIAN_FRONTEND=noninteractive
+        snapshot="http://snapshot.debian.org/archive"
+        rm -f /etc/apt/sources.list.d/*
+        printf "deb [check-valid-until=no] %s bullseye%s main\n" \
+            "$snapshot/debian/$DEBIAN_SNAPSHOT" "" \
+            "$snapshot/debian-security/$DEBIAN_SNAPSHOT" "-security" \
+            "$snapshot/debian/$DEBIAN_SNAPSHOT" "-updates" > /etc/apt/sources.list
         apt-get -qq update >/dev/null
         apt-get -qq install -y --no-install-recommends \
             libxcb-cursor0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 \
@@ -126,7 +139,6 @@ printf '[container] commit %s (%s)\n' "${HOST_COMMIT:-unknown}" "$HOST_TREE_STAT
             --exclude=./.runtime \
             --exclude=./build \
             --exclude=./dist \
-            --exclude=./mockup \
             --exclude=*/__pycache__ \
             --exclude=*.pyc \
             . | tar -C /work -xf -

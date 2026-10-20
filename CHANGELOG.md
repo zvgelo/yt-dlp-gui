@@ -4,9 +4,9 @@ All notable changes to this project are recorded here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow
 [Semantic Versioning](https://semver.org/).
 
-## [1.0.0] - 2026-08-18
+## [1.0.0] - 2026-10-20
 
-First release. Everything below works in the released Linux artifact and was
+Initial release. Everything below works in the released Linux artifact and was
 checked on a machine with no Python, FFmpeg, Deno or yt-dlp installed.
 
 ### Added
@@ -22,8 +22,11 @@ checked on a machine with no Python, FFmpeg, Deno or yt-dlp installed.
 - **Duplicate detection** that separates what a media item *is* from what the
   user wants out of it, with a review queue and thread-safe reservations, so
   the same video in two qualities is not mistaken for the same download.
+- **Readable failures**: a private, age-restricted, members-only, geo-blocked
+  or removed video, a missing FFmpeg or a network problem gets a plain sentence
+  and a hint, with the original yt-dlp message in the error details.
 - **Two retry layers**: yt-dlp's own, and an application-level job retry that
-  keeps a per-attempt history and a readable reason for each failure.
+  repeats only transient failures and keeps a per-attempt history.
 - **A persistent SQLite history** that survives restarts, recovers interrupted
   downloads and never deletes a downloaded file when records are cleared.
 - **URL intent classification**, so a watch link that carries playlist context
@@ -33,7 +36,7 @@ checked on a machine with no Python, FFmpeg, Deno or yt-dlp installed.
   all switchable at runtime.
 - **Keyboard navigation** with accessible names on every focusable control and
   a tab order that follows the visible layout.
-- **An About box** (`⋯` → About, F1, or Preferences → Diagnostics) showing the
+- **An About box** (F1, or Preferences → Diagnostics) showing the
   version, the components the build is made of, the project address and the
   licence.
 - **A Diagnostics tab** in Preferences listing the application, yt-dlp, FFmpeg,
@@ -47,7 +50,8 @@ checked on a machine with no Python, FFmpeg, Deno or yt-dlp installed.
 
 ### Packaging
 
-- **A Linux AppImage** that carries Python, Qt, yt-dlp, FFmpeg and Deno.
+- **A Linux AppImage** that carries Python, Qt, yt-dlp 2026.08.19, FFmpeg 8.1
+  and Deno 2.9.
   Nothing has to be installed first, and the bundled JavaScript runtime means
   YouTube extraction offers the full set of formats rather than a reduced one.
 - **A Windows packaging pipeline** - PyInstaller bundle, portable ZIP and an
@@ -67,16 +71,10 @@ checked on a machine with no Python, FFmpeg, Deno or yt-dlp installed.
   `--integration` modes, all run in a clean container under a throw-away
   profile; `--integration` downloads and merges real media and checks the
   result with ffprobe.
-
-### Fixed
-
-- The Linux build could die of SIGPIPE while assembling the AppDir: a producer
-  piped into an `awk` that exits on its first match, under `set -o pipefail`.
-  It failed only sometimes, depending on how much output had been buffered.
-- A `DownloadController` that was never shut down destroyed a running QThread,
-  which aborts the process wherever the garbage collector happens to run. It
-  now closes itself, and shutdown unhooks the worker before the thread stops
-  and can be called twice.
+- **A reproducible build base**: the container build reads Debian 11 packages
+  from a pinned snapshot.debian.org date, since Debian 11 is past its LTS.
+- **A release workflow**: pushing a version tag builds both platforms and
+  creates a draft GitHub release with the Linux artifacts and these notes.
 
 ### Notes
 
@@ -85,3 +83,5 @@ checked on a machine with no Python, FFmpeg, Deno or yt-dlp installed.
 - The AppImage is not bit-for-bit reproducible: squashfs and PyInstaller embed
   timestamps. The manifest records the commit, the container image and every
   bundled version instead.
+
+[1.0.0]: https://github.com/zvgelo/yt-dlp-gui/releases/tag/v1.0.0

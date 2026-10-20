@@ -16,7 +16,7 @@ from . import style
 
 
 class MediaInfoWidget(QWidget):
-    """Counterpart of the top section in the "download options" mockup."""
+    """The media summary at the top of the download dialog."""
 
     def __init__(self, info: MediaInfo, thumbnails: ThumbnailCache, parent=None):
         super().__init__(parent)

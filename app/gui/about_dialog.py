@@ -22,7 +22,7 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
 )
 
-from .. import APP_TITLE, LICENSE_NAME, PROJECT_URL, __version__
+from .. import APP_TITLE, LICENSE_NAME, PROJECT_URL, YTDLP_URL, __version__
 from ..core import diagnostics
 from ..core.runtime_tools import ToolInfo, ToolState
 from ..resources import license_file
@@ -100,6 +100,18 @@ class AboutDialog(QDialog):
         self._grid.setColumnStretch(1, 1)
         layout.addLayout(self._grid)
 
+        # Credit where the work happens: every download goes through yt-dlp
+        self.upstream_label = QLabel()
+        self.upstream_label.setWordWrap(True)
+        self.upstream_label.setOpenExternalLinks(False)
+        self.upstream_label.setTextInteractionFlags(
+            Qt.TextInteractionFlag.TextSelectableByMouse
+            | Qt.TextInteractionFlag.LinksAccessibleByMouse
+            | Qt.TextInteractionFlag.LinksAccessibleByKeyboard)
+        self.upstream_label.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+        self.upstream_label.linkActivated.connect(self._open_repository)
+        layout.addWidget(self.upstream_label)
+
         # A link rather than a button: it is an address, and it is worth being
         # able to read and copy it even where nothing can open a browser.
         self.repository_label = QLabel()
@@ -136,7 +148,7 @@ class AboutDialog(QDialog):
             self.license_button.setVisible(False)
 
         order_button_box(self, self.buttons)
-        apply_tab_order(self, [self.repository_label, self.license_button,
+        apply_tab_order(self, [self.upstream_label, self.repository_label, self.license_button,
                                self.close_button])
 
         if themes is not None:
@@ -179,6 +191,11 @@ class AboutDialog(QDialog):
             f'{caption}: <a href="{PROJECT_URL}" style="color: {colour};">'
             f'{PROJECT_URL}</a>')
         self.repository_label.setAccessibleName(self.tr('Project repository'))
+        link = f'<a href="{YTDLP_URL}" style="color: {colour};">yt-dlp</a>'
+        self.upstream_label.setText(
+            self.tr('Based on {0}: every analysis, download and conversion is done by yt-dlp, '
+                    'developed by its contributors. This application is the window around it.').format(link))
+        self.upstream_label.setAccessibleName(self.tr('yt-dlp project'))
         self.license_label.setText(self.tr('Released under {0}.').format(LICENSE_NAME))
         self.license_button.setText(
             self.tr('Hide licence') if self.license_view.isVisibleTo(self)

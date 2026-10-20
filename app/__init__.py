@@ -13,5 +13,8 @@ APP_DESCRIPTION = 'A desktop graphical interface for yt-dlp.'
 #: rather than repeating the address; there is nothing else to keep in step.
 PROJECT_URL = 'https://github.com/zvgelo/yt-dlp-gui'
 
+#: The project this application is a front-end for, credited in the About box
+YTDLP_URL = 'https://github.com/yt-dlp/yt-dlp'
+
 #: SPDX identifier of the licence in LICENSE at the repository root
 LICENSE_NAME = 'The Unlicense'

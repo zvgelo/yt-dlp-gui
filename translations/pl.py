@@ -83,18 +83,18 @@ TRANSLATIONS = {
     'The playlist could not be fully retrieved.': 'Nie udało się wczytać całej playlisty.',
     'It needs an account with access — try browser cookies.':
         'Wymaga konta z dostępem — spróbuj ciasteczek z przeglądarki.',
-    'Enable browser cookies in Preferences → Network.':
-        'Włącz ciasteczka z przeglądarki w Preferencjach → Sieć.',
-    'A proxy set in Preferences → Network may help.':
-        'Może pomóc proxy ustawione w Preferencjach → Sieć.',
+    'Enable browser cookies in Preferences → Network and FFmpeg.':
+        'Włącz ciasteczka z przeglądarki w Preferencjach → Sieć i FFmpeg.',
+    'A proxy set in Preferences → Network and FFmpeg may help.':
+        'Może pomóc proxy ustawione w Preferencjach → Sieć i FFmpeg.',
     'yt-dlp has no extractor for this site.': 'yt-dlp nie ma ekstraktora dla tej strony.',
     'Pick another quality or “Best available”.': 'Wybierz inną jakość albo „Najlepsza dostępna”.',
     'The video may be DRM protected.': 'Materiał może być chroniony DRM.',
-    'Install FFmpeg or set its folder in Preferences → Network.':
-        'Zainstaluj FFmpeg albo wskaż jego katalog w Preferencjach → Sieć.',
+    'Install FFmpeg or set its folder in Preferences → Network and FFmpeg.':
+        'Zainstaluj FFmpeg albo wskaż jego katalog w Preferencjach → Sieć i FFmpeg.',
     'Check your connection and try again.': 'Sprawdź połączenie i spróbuj ponownie.',
-    'Check the proxy address in Preferences → Network.':
-        'Sprawdź adres proxy w Preferencjach → Sieć.',
+    'Check the proxy address in Preferences → Network and FFmpeg.':
+        'Sprawdź adres proxy w Preferencjach → Sieć i FFmpeg.',
     'Choose a different destination folder.': 'Wskaż inny katalog docelowy.',
     'Check whether FFmpeg is installed.': 'Sprawdź, czy FFmpeg jest zainstalowany.',
     'This usually means FFmpeg is missing or too old.':
@@ -103,10 +103,6 @@ TRANSLATIONS = {
     # ---- Labels: progress and results ----
     'ETA {0}': 'pozostało {0}',
     'fragment {0}/{1}': 'fragment {0}/{1}',
-    'Download completed': 'Pobieranie zakończone',
-    'Completed with errors': 'Zakończono z błędami',
-    'Download failed': 'Pobieranie nieudane',
-    'Download cancelled': 'Pobieranie anulowane',
     'The playlist could not be fully retrieved — some items may be missing.':
         'Nie udało się wczytać całej playlisty — część pozycji może brakować.',
     'The playlist could not be retrieved.': 'Nie udało się wczytać playlisty.',
@@ -168,9 +164,8 @@ TRANSLATIONS = {
     'Show in folder': 'Pokaż w katalogu',
     'Copy address': 'Kopiuj adres',
     'Download again': 'Pobierz ponownie',
-    'Remove from list': 'Usuń z listy',
     'Remove completed': 'Usuń ukończone',
-    'Settings saved': 'Ustawienia zapisane',
+    'Preferences saved': 'Preferencje zapisane',
     'Download folder': 'Katalog pobrań',
     'Analysing {0}…': 'Analizuję {0}…',
     'queued: {0}': 'w kolejce: {0}',
@@ -355,6 +350,25 @@ TRANSLATIONS = {
     'Attempt history': 'Historia prób',
     'Full message from yt-dlp': 'Pełny komunikat yt-dlp',
     'Category: {0}': 'Kategoria: {0}',
+    'Based on {0}: every analysis, download and conversion is done by yt-dlp, '
+    'developed by its contributors. This application is the window around it.':
+        'Oparte na {0}: każdą analizę, pobieranie i konwersję wykonuje yt-dlp, '
+        'rozwijany przez jego społeczność. Ta aplikacja jest oknem wokół niego.',
+    'yt-dlp project': 'Projekt yt-dlp',
+    'Network': 'Sieć',
+    'Server': 'Serwer',
+    'Site or address': 'Strona lub adres',
+    'Sign-in required': 'Wymagane logowanie',
+    'Region': 'Region',
+    'Files and folders': 'Pliki i katalogi',
+    'Playlist': 'Playlista',
+    'Other': 'Inne',
+    'FFmpeg was not found. Merging video with audio, audio conversion, '
+    'cover art and subtitle embedding are unavailable.':
+        'Nie znaleziono FFmpeg. Scalanie obrazu z dźwiękiem, konwersja audio, '
+        'osadzanie okładek i napisów są niedostępne.',
+    'FFmpeg {0}': 'FFmpeg {0}',
+    'FFmpeg is available': 'FFmpeg jest dostępny',
     'Address: {0}': 'Adres: {0}',
     'Playlist: {0}': 'Playlista: {0}',
     'No recorded attempts': 'Brak zapisanych prób',
@@ -379,7 +393,7 @@ TRANSLATIONS = {
     'Search downloads': 'Szukaj w pobraniach',
     'Download queue': 'Kolejka pobrań',
     'Settings sections': 'Sekcje ustawień',
-    'Choose cookies file': 'Wybierz plik ciasteczek',
+    'Choose cookie file': 'Wybierz plik ciasteczek',
     'Choose FFmpeg location': 'Wskaż lokalizację FFmpeg',
 
     # ---- Dependency warnings ----

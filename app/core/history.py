@@ -27,8 +27,8 @@ from collections.abc import Iterable, Sequence
 from datetime import datetime, timezone
 from pathlib import Path
 
-#: Wersja schematu trzymana w `PRAGMA user_version`
-SCHEMA_VERSION = 3
+#: Schema version kept in `PRAGMA user_version`
+SCHEMA_VERSION = 4
 
 #: How many records are loaded at start-up (newest first)
 DEFAULT_LIMIT = 1000
@@ -91,6 +91,9 @@ class HistoryRecord:
     error_message: str = ''
     duplicate_of_record_id: str = ''
     duplicate_kind: str = ''
+    #: The download options of the request as JSON, so a retry after a restart
+    #: downloads exactly what was asked for rather than the current defaults
+    request_options: str = ''
 
     @property
     def identity(self) -> MediaIdentity:
@@ -164,7 +167,8 @@ CREATE TABLE IF NOT EXISTS records (
     error_code             TEXT NOT NULL DEFAULT '',
     error_message          TEXT NOT NULL DEFAULT '',
     duplicate_of_record_id TEXT NOT NULL DEFAULT '',
-    duplicate_kind         TEXT NOT NULL DEFAULT ''
+    duplicate_kind         TEXT NOT NULL DEFAULT '',
+    request_options        TEXT NOT NULL DEFAULT ''
 );
 
 -- Indexes for the queries actually issued: tab filters, duplicate detection
@@ -194,6 +198,7 @@ CREATE INDEX IF NOT EXISTS idx_attempts_record ON attempts(record_id);
 _RECORD_FIELDS = tuple(field.name for field in dataclasses.fields(HistoryRecord))
 _PLAYLIST_FIELDS = tuple(field.name for field in dataclasses.fields(PlaylistRecord))
 
+_CREATE_INDEX_RE = re.compile(r'^CREATE INDEX IF NOT EXISTS [^;]*;', re.MULTILINE)
 _CREATE_TABLE_RE = re.compile(
     r'CREATE TABLE IF NOT EXISTS (\w+)\s*\((.*?)\n\);', re.DOTALL)
 
@@ -275,14 +280,19 @@ class HistoryStore:
         if version > SCHEMA_VERSION:
             return
 
+        # Indexes come last: one may cover a column an older database is still
+        # missing, and creating it first fails before the column can be added
+        tables_sql = _CREATE_INDEX_RE.sub('', _SCHEMA)
         with connection:
-            connection.executescript(_SCHEMA)
+            connection.executescript(tables_sql)
             for table, columns in _declared_columns().items():
                 existing = {row['name'] for row in
                             connection.execute(f'PRAGMA table_info({table})')}
                 for name, declaration in columns.items():
                     if name not in existing:
                         connection.execute(f'ALTER TABLE {table} ADD COLUMN {declaration}')
+            for statement in _CREATE_INDEX_RE.findall(_SCHEMA):
+                connection.execute(statement)
             connection.execute(f'PRAGMA user_version={SCHEMA_VERSION}')
 
     def close(self) -> None:
@@ -466,8 +476,9 @@ class HistoryStore:
         """In-progress records from a previous session must not look active.
 
         The application has not been running since the last start-up, so
-        everything stored as downloading or post-processing is marked as
-        interrupted; the user can retry or remove it.
+        everything stored in one of `active_statuses` (queued, retrying,
+        downloading, post-processing) is marked as interrupted. Nothing starts
+        on its own; the user can retry or remove it.
         """
         if not active_statuses:
             return 0

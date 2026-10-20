@@ -140,14 +140,14 @@ def test_set_language_returns_false_without_a_change(manager):
 
 
 def test_change_signal(qapp, manager):
-    widziane = []
-    manager.languageChanged.connect(lambda language: widziane.append(language.code))
+    seen = []
+    manager.languageChanged.connect(lambda language: seen.append(language.code))
     manager.set_language('pl')
     manager.set_language('en')
-    assert widziane == ['pl', 'en']
+    assert seen == ['pl', 'en']
 
 
-# -------------------------------------------------------------- zapis
+# -------------------------------------------------------------- writing
 
 
 def test_the_language_survives_a_restart(tmp_path):
