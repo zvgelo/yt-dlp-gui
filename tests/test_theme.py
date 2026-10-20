@@ -43,7 +43,7 @@ def test_every_theme_defines_all_colours():
             if field.name in ('key', 'name') or isinstance(value, bool):
                 continue
             assert value, f'{theme.key}: no value for {field.name}'
-            assert to_color(value).isValid(), f'{theme.key}: {field.name}={value!r} nie jest kolorem'
+            assert to_color(value).isValid(), f'{theme.key}: {field.name}={value!r} is not a colour'
 
 
 def test_steel_differs_from_dark():
@@ -59,7 +59,7 @@ def test_steel_differs_from_dark():
 
 
 def test_an_unknown_key_yields_the_default():
-    assert get_theme('nie-ma-takiego').key == DEFAULT_THEME_KEY
+    assert get_theme('no-such-theme').key == DEFAULT_THEME_KEY
 
 
 # ----------------------------------------------------------------- render
@@ -105,11 +105,11 @@ def test_set_theme_returns_false_when_nothing_changes(manager):
 
 
 def test_change_signal(qapp, manager):
-    widziane = []
-    manager.themeChanged.connect(lambda theme: widziane.append(theme.key))
+    seen = []
+    manager.themeChanged.connect(lambda theme: seen.append(theme.key))
     manager.set_theme('light')
     manager.set_theme('steel')
-    assert widziane == ['light', 'steel']
+    assert seen == ['light', 'steel']
 
 
 def test_the_preview_does_not_persist(manager):
@@ -119,7 +119,7 @@ def test_the_preview_does_not_persist(manager):
     assert manager._settings.value(SETTINGS_KEY) == 'steel'
 
 
-# ----------------------------------------------------------------- zapis
+# ----------------------------------------------------------------- writing
 
 
 def test_the_theme_survives_a_restart(tmp_path, qapp):
@@ -145,7 +145,7 @@ def test_default_theme_without_a_stored_setting(tmp_path):
     assert ThemeManager(settings).key == DEFAULT_THEME_KEY
 
 
-# ---------------------------------------------------------------- paleta
+# ---------------------------------------------------------------- palette
 
 
 @pytest.mark.parametrize('theme', THEMES, ids=lambda t: t.key)

@@ -167,6 +167,21 @@ def _best_video_at(formats, height: int, prefer_ext: str = '') -> FormatInfo | N
     ))
 
 
+def _audio_for_container(formats, container: str) -> FormatInfo | None:
+    """The audio stream the selector will pair with video for this container.
+
+    `_video_selector` asks for `ba[ext=m4a]` with MP4 and `ba[ext=webm]` with
+    WebM, so describing the overall best track (often Opus) would promise a
+    codec and size the download does not deliver.
+    """
+    exts = _EXT_PREFERENCE.get(container)
+    if exts:
+        matching = best_audio([f for f in formats if f.ext == exts[1]])
+        if matching is not None:
+            return matching
+    return best_audio(formats)
+
+
 def _combined_size(video: FormatInfo, audio: FormatInfo | None) -> int | None:
     if video.is_muxed or audio is None:
         return video.size
@@ -186,7 +201,7 @@ def quality_options(formats, prefer_ext: str = '') -> list[QualityOption]:
     """
     options = [QualityOption(value=QUALITY_BEST, label='', grade=QualityGrade.AUTOMATIC)]
 
-    audio = best_audio(formats)
+    audio = _audio_for_container(formats, prefer_ext)
     for height in available_heights(formats):
         video = _best_video_at(formats, height, prefer_ext)
         if video is None:
@@ -237,7 +252,7 @@ def audio_quality_options(formats) -> list[QualityOption]:
 
 
 def video_variants(formats) -> list[FormatVariant]:
-    """Konkretne warianty wideo: '1080p • 60 FPS • H.264 • MP4'.
+    """Concrete video variants: '1080p • 60 FPS • H.264 • MP4'.
 
     Video-only streams are combined with the best audio (`id+id`); muxed ones
     are left as they are.
@@ -277,7 +292,7 @@ def video_variants(formats) -> list[FormatVariant]:
 
 
 def audio_variants(formats) -> list[FormatVariant]:
-    """Konkretne warianty audio: '160 kbps • Opus • WEBM'."""
+    """Concrete audio variants: '160 kbps • Opus • WEBM'."""
     variants: list[FormatVariant] = []
     seen: set[tuple] = set()
 
@@ -322,13 +337,19 @@ def _audio_selector(request: DownloadRequest) -> str:
     """Audio only; FFmpegExtractAudioPP handles the container conversion."""
     preferred = ''
     if request.audio_format in ('m4a', 'aac'):
-        preferred = 'ba[ext=m4a]/'
+        preferred = 'ba[ext=m4a]'
     elif request.audio_format == 'opus':
-        preferred = 'ba[acodec=opus]/'
+        preferred = 'ba[acodec=opus]'
 
     if request.quality > 0:
-        # Do not go lower than needed, nor pay for a stream better than the target
-        return f'{preferred}ba[abr<={request.quality}]/ba/b'
+        # The bitrate limit applies to the preferred codec too: when the stream
+        # already has the target codec, ExtractAudio copies it and never
+        # re-encodes down to the requested quality
+        limit = f'[abr<={request.quality}]'
+        preferred_limited = f'{preferred}{limit}/' if preferred else ''
+        return f'{preferred_limited}ba{limit}/ba/b'
+    if preferred:
+        preferred += '/'
     if request.quality == QUALITY_WORST:
         return 'wa/w'
     return f'{preferred}ba/b'

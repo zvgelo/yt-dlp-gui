@@ -1,4 +1,4 @@
-"""The "Download media" dialog, mirroring the `download options.jpg` mockup."""
+"""The "Download media" dialog: media summary, format choice and options."""
 
 from __future__ import annotations
 

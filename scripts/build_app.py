@@ -228,7 +228,7 @@ def verify_bundle(bundle: Path, platform_name: str) -> None:
     # the helper binaries a source checkout fetched for itself
     from app.resources import DEV_RUNTIME_DIR_NAME
 
-    for unwanted in ('tests', 'mockup', '.git', DEV_RUNTIME_DIR_NAME):
+    for unwanted in ('tests', '.git', DEV_RUNTIME_DIR_NAME):
         if (internal / unwanted).exists() or (bundle / unwanted).exists():
             fail(f'the bundle unexpectedly contains {unwanted}')
 

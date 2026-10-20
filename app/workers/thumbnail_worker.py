@@ -14,6 +14,8 @@ from pathlib import Path
 from PySide6.QtCore import QObject, QRunnable, QStandardPaths, Qt, QThreadPool, Signal, Slot
 from PySide6.QtGui import QPixmap
 
+from .. import APP_NAME
+
 _USER_AGENT = 'Mozilla/5.0 (X11; Linux x86_64) yt-dlp-gui'
 _TIMEOUT = 10
 _MAX_BYTES = 4 * 1024 * 1024
@@ -23,7 +25,7 @@ _STORE_HEIGHT = 270
 
 
 class _FetchSignals(QObject):
-    done = Signal(str, bytes)  # url, dane obrazu (puste = niepowodzenie)
+    done = Signal(str, bytes)  # url, image data (empty = failure)
 
 
 class ThumbnailWorker(QRunnable):
@@ -61,8 +63,11 @@ class ThumbnailCache(QObject):
         self._signals = _FetchSignals()
         self._signals.done.connect(self._on_fetched)
 
-        base = QStandardPaths.writableLocation(QStandardPaths.StandardLocation.CacheLocation)
-        self._dir = Path(base or '') / 'thumbnails'
+        # GenericCacheLocation plus the name, like app_data_dir(): CacheLocation
+        # appends both the organisation and the application name, which are
+        # identical here, giving ~/.cache/yt-dlp-gui/yt-dlp-gui
+        base = QStandardPaths.writableLocation(QStandardPaths.StandardLocation.GenericCacheLocation)
+        self._dir = Path(base or '') / APP_NAME / 'thumbnails'
 
     def get(self, url: str, width: int, height: int,
             ratio: float = 1.0) -> QPixmap | None:

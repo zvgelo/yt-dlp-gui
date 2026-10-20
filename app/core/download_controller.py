@@ -7,6 +7,7 @@ class.
 
 from __future__ import annotations
 
+import contextlib
 import itertools
 import logging
 import os
@@ -20,7 +21,7 @@ from ..state import ACTIVE_TASK_STATES, AppState, TaskState
 from ..workers.download_worker import DownloadWorker
 from ..workers.extract_worker import ExtractWorker
 from .duplicates import ArtifactIdentity, DuplicateKind, DuplicatePolicy, DuplicateService
-from .errors import FriendlyError, is_retryable
+from .errors import AppErrorCode, FriendlyError, describe_messages, is_retryable
 from .history import HistoryStore, MediaIdentity, now_iso
 from .history_mapper import (
     job_from_playlist_record,
@@ -132,10 +133,8 @@ class DownloadController(QObject):
 
     def _disconnect_worker(self) -> None:
         for signal, slot in self._worker_connections():
-            try:
+            with contextlib.suppress(RuntimeError, TypeError):  # already gone
                 signal.disconnect(slot)
-            except (RuntimeError, TypeError):  # already gone
-                pass
 
     # ------------------------------------------------------------- access
 
@@ -149,10 +148,6 @@ class DownloadController(QObject):
 
     def playlist(self, playlist_id: str) -> PlaylistJob | None:
         return next((job for job in self._playlists if job.id == playlist_id), None)
-
-    def active_items(self) -> list[DownloadTask]:
-        """The "in progress" queue: downloading items first, then waiting ones."""
-        return [task for task in self._tasks if not task.state.is_final]
 
     @property
     def state(self) -> AppState:
@@ -199,14 +194,22 @@ class DownloadController(QObject):
         self._pool.start(worker)
         return request_id
 
+    def _release_analysis_signals(self) -> None:
+        """Free the per-analysis signal object once its one answer has arrived."""
+        signals = self.sender()
+        if signals is not None:
+            signals.deleteLater()
+
     @Slot(str, object)
     def _on_analysis_finished(self, request_id: str, info) -> None:
+        self._release_analysis_signals()
         self._pending_analyses = max(0, self._pending_analyses - 1)
         self.analysisFinished.emit(request_id, info)
         self._refresh_state()
 
     @Slot(str, object)
     def _on_analysis_failed(self, request_id: str, error: FriendlyError) -> None:
+        self._release_analysis_signals()
         self._pending_analyses = max(0, self._pending_analyses - 1)
         self.analysisFailed.emit(request_id, error)
         self._refresh_state()
@@ -265,7 +268,8 @@ class DownloadController(QObject):
                 continue
             if task_id == self._active_id:
                 self._worker.request_cancel()
-            elif task.state is TaskState.QUEUED:
+            elif task.state in (TaskState.QUEUED, TaskState.RETRYING):
+                # A pending retry checks the state before requeueing, so it stays cancelled
                 task.state = TaskState.CANCELLED
                 task.completed_at = now_iso()
                 self._persist(task_id)
@@ -621,6 +625,10 @@ class DownloadController(QObject):
         if progress.status == 'finished':
             task.percent = 100.0
             task.state = TaskState.POSTPROCESSING
+        elif progress.status == 'downloading' and task.state is TaskState.POSTPROCESSING:
+            # Video and audio arrive as separate files: after the first one
+            # finishes the second is still downloading, not post-processing
+            task.state = TaskState.DOWNLOADING
         self.taskChanged.emit(task_id)
         self._refresh_state()
 
@@ -637,14 +645,29 @@ class DownloadController(QObject):
 
     @Slot(str, object)
     def _on_completed(self, task_id: str, result: DownloadResult) -> None:
-        """A worker finishing is not yet success; `result.status` decides."""
+        """A worker finishing is not yet success; `result.status` decides.
+
+        yt-dlp reports most failures (a private video, a network error) by
+        raising inside `extract_info`, which the service turns into an ERROR
+        result rather than an exception. Such a result is a failed attempt and
+        goes through the same path as one, so it gets a reason, the automatic
+        retry policy and the "Failed" notice.
+        """
         task = self._by_id.get(task_id)
+        if task is not None and result.status is DownloadResultStatus.ERROR:
+            task.result = result
+            self._on_failed(task_id, _failure_from_result(result))
+            return
         if task is not None:
             task.result = result
             task.stage = None
             task.filepath = result.primary_file
             task.progress = DownloadProgress(status='finished', total_bytes=task.progress.total_bytes)
             task.state = _STATE_FOR_RESULT[result.status]
+            if result.has_problems:
+                # Keep the reason for a partial success, for the error details
+                problem = _failure_from_result(result)
+                task.error_code, task.error = problem.code, problem.details
             task.percent = 100.0 if result.completed_items else task.percent
             task.completed_at = now_iso()
             task.finish_attempt(task.completed_at, result.status.value)
@@ -686,6 +709,7 @@ class DownloadController(QObject):
         task.completed_at = stamp
         self._persist(task_id)
         self.taskChanged.emit(task_id)
+        self._notify_playlist(task_id)
         self.taskFailed.emit(task)
         self._pump()
 
@@ -821,7 +845,14 @@ class DownloadController(QObject):
         calls `shutdown()`; this is for the paths that do not, such as a test
         whose set-up failed half way through.
         """
-        try:
+        with contextlib.suppress(Exception):  # nothing can be reported from here
             self.shutdown()
-        except Exception:  # noqa: BLE001 - nothing can be reported from here
-            pass
+
+
+def _failure_from_result(result: DownloadResult) -> FriendlyError:
+    """The reason behind a result with problems, read from its collected errors."""
+    if result.errors:
+        return describe_messages(result.errors)
+    if result.enumeration_errors:
+        return FriendlyError(AppErrorCode.PLAYLIST_INCOMPLETE, result.enumeration_errors[0])
+    return FriendlyError(AppErrorCode.NOTHING_FOUND)

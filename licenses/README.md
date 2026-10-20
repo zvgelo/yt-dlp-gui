@@ -15,7 +15,7 @@ the component ships. Nothing is reproduced from memory.
 
 | Component | Version | Licence | Where it comes from |
 | --- | --- | --- | --- |
-| FFmpeg (`ffmpeg`, `ffprobe`) | n8.1.2 | LGPL-3.0-or-later | [BtbN/FFmpeg-Builds](https://github.com/BtbN/FFmpeg-Builds), `linux64-lgpl` / `win64-lgpl` |
+| FFmpeg (`ffmpeg`, `ffprobe`) | n8.1.2 | LGPL-3.0-or-later | [BtbN/FFmpeg-Builds](https://github.com/BtbN/FFmpeg-Builds) `autobuild-2026-08-17-13-05`, `linux64-lgpl` / `win64-lgpl`, mirrored unchanged in this repository's [`runtime-deps`](https://github.com/zvgelo/yt-dlp-gui/releases/tag/runtime-deps) release |
 | Deno | 2.9.5 | MIT | [denoland/deno](https://github.com/denoland/deno) release binaries |
 
 **FFmpeg.** The LGPL build is used rather than the GPL one. The binary reports

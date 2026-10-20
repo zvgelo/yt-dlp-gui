@@ -27,10 +27,6 @@ log = logging.getLogger(__name__)
 _active: Language = get_language(DEFAULT_LANGUAGE_CODE)
 
 
-def active_language() -> Language:
-    return _active
-
-
 class TranslationManager(QObject):
     """Available languages, current choice, translator installation and storage."""
 

@@ -36,6 +36,11 @@ MAX_PLAYLIST_ITEMS = 1000
 #: Seconds to wait for an unresponsive host before yt-dlp gives up
 SOCKET_TIMEOUT = 20
 
+#: Targets EmbedThumbnailPP refuses (yt_dlp/postprocessor/embedthumbnail.py
+#: supports mp3, mkv/mka, ogg/opus/flac and m4a/mp4/m4v/mov). Asking anyway
+#: fails the post-processing and leaves the image file behind.
+NO_COVER_ART_EXTS = frozenset({'webm', 'wav', 'aac'})
+
 
 class PostProcessStage(enum.Enum):
     """A post-processing stage; carries no text, the GUI translates it."""
@@ -295,16 +300,19 @@ class YtDlpService:
                 'subtitleslangs': list(request.subtitle_languages) or ['en'],
             })
 
-        if request.embed_thumbnail or request.write_thumbnail:
+        embed_thumbnail = can_embed_thumbnail(request)
+        if embed_thumbnail or request.write_thumbnail:
             options['writethumbnail'] = True
             if not request.write_thumbnail:
                 # The cover is only material to embed; do not leave it on disk
                 options['outtmpl']['pl_thumbnail'] = ''
 
-        options['postprocessors'] = self._postprocessors(request, wants_subs=wants_subs)
+        options['postprocessors'] = self._postprocessors(
+            request, wants_subs=wants_subs, embed_thumbnail=embed_thumbnail)
         return options
 
-    def _postprocessors(self, request: DownloadRequest, *, wants_subs: bool) -> list[dict]:
+    def _postprocessors(self, request: DownloadRequest, *, wants_subs: bool,
+                        embed_thumbnail: bool) -> list[dict]:
         s = self._settings
         pps: list[dict] = []
 
@@ -352,7 +360,7 @@ class YtDlpService:
                 'add_infojson': 'if_exists',
             })
 
-        if request.embed_thumbnail:
+        if embed_thumbnail:
             pps.append({'key': 'EmbedThumbnail', 'already_have_thumbnail': request.write_thumbnail})
 
         return pps
@@ -469,25 +477,19 @@ class YtDlpService:
         )
 
 
+def can_embed_thumbnail(request: DownloadRequest) -> bool:
+    """Whether the cover art can go into the target file at all."""
+    return request.embed_thumbnail and request.target_ext not in NO_COVER_ART_EXTS
+
+
 # --------------------------------------------------------- converting an info_dict
 
 
 def build_media_info(url: str, raw: dict) -> MediaInfo:
     """`info_dict` -> `MediaInfo`. The raw dictionary never leaves this module."""
     if raw.get('_type') in ('playlist', 'multi_video'):
-        entries = _playlist_entries(raw)
-        return MediaInfo(
-            url=url,
-            title=raw.get('title') or 'Playlista',
-            webpage_url=raw.get('webpage_url') or url,
-            uploader=raw.get('uploader') or '',
-            channel=raw.get('channel') or '',
-            extractor=raw.get('extractor_key') or raw.get('extractor') or '',
-            thumbnail_url=_pick_thumbnail(raw) or (entries[0].thumbnail_url if entries else ''),
-            is_playlist=True,
-            playlist_title=raw.get('title') or '',
-            entries=tuple(entries),
-        )
+        # One playlist path for everyone, with canonical child URLs
+        return build_playlist_info(url, raw)
 
     return MediaInfo(
         url=url,
@@ -503,29 +505,6 @@ def build_media_info(url: str, raw: dict) -> MediaInfo:
         formats=parse_formats(raw.get('formats')),
         subtitles=_subtitle_tracks(raw),
     )
-
-
-def _playlist_entries(raw: dict) -> list[PlaylistEntry]:
-    entries: list[PlaylistEntry] = []
-    for index, entry in enumerate(raw.get('entries') or [], start=1):
-        if not isinstance(entry, dict):
-            continue
-        # Nested playlists (e.g. a channel with tabs) are flattened one level
-        if entry.get('_type') in ('playlist', 'multi_video'):
-            entries.extend(_playlist_entries(entry))
-            continue
-        entry_url = entry.get('webpage_url') or entry.get('url') or ''
-        if not entry_url:
-            continue
-        entries.append(PlaylistEntry(
-            url=entry_url,
-            title=entry.get('title') or entry_url,
-            index=entry.get('playlist_index') or index,
-            duration=entry.get('duration'),
-            thumbnail_url=_pick_thumbnail(entry),
-            uploader=entry.get('uploader') or entry.get('channel') or '',
-        ))
-    return entries
 
 
 def _pick_thumbnail(raw: dict) -> str:
@@ -598,7 +577,7 @@ def build_playlist_info(url: str, raw: dict) -> MediaInfo:
         for entry in _iter_entries(raw.get('entries')):
             if len(entries) >= MAX_PLAYLIST_ITEMS:
                 complete = False
-                error = f'Wczytano pierwsze {MAX_PLAYLIST_ITEMS} pozycji playlisty.'
+                error = f'Only the first {MAX_PLAYLIST_ITEMS} playlist entries were loaded.'
                 break
             parsed = _playlist_entry(entry, len(entries) + 1, playlist_url)
             if parsed is not None:

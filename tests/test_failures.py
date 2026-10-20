@@ -9,7 +9,7 @@ from PySide6.QtWidgets import QApplication
 from app.core.download_controller import DownloadController
 from app.core.errors import AppErrorCode, ErrorCategory, FriendlyError, is_retryable
 from app.core.history import HistoryStore
-from app.core.models import DownloadRequest, DownloadTask
+from app.core.models import DownloadRequest, DownloadResult, DownloadTask
 from app.core.ytdlp_service import YtDlpService
 from app.settings import AppSettings
 from app.state import TaskState
@@ -207,19 +207,62 @@ def test_retry_all(controller, qapp):
     assert all(task.state.is_active for task in tasks)
 
 
-# ------------------------------------------------------------------ usuwanie
+# ------------------------------------------------- failures reported as results
+
+
+def _complete(controller, task, result):
+    """Deliver a result the way the worker does after `YtDlpService.download`."""
+    controller._active_id = task.id
+    task.begin_attempt('2026-08-17T10:00:00+00:00')
+    controller._on_completed(task.id, result)
+
+
+def test_an_error_result_carries_its_reason(controller, qapp):
+    # yt-dlp raises DownloadError; the service turns it into an ERROR result
+    failed = []
+    controller.taskFailed.connect(failed.append)
+    task = _task(controller)
+    _complete(controller, task, DownloadResult.classify(
+        fatal=True, errors=('[youtube] abc: Private video. Sign in if you have been granted access',)))
+
+    assert task.state is TaskState.ERROR
+    assert task.error_code is AppErrorCode.PRIVATE_VIDEO
+    assert 'Private video' in task.error
+    assert task.attempts[-1].error_code == AppErrorCode.PRIVATE_VIDEO.value
+    assert failed == [task]
+
+
+def test_a_network_error_result_is_retried_automatically(controller, qapp):
+    task = _task(controller)
+    _complete(controller, task, DownloadResult.classify(
+        fatal=True, errors=('Unable to download webpage: <urlopen error timed out>',)))
+
+    assert task.state is TaskState.RETRYING
+    assert task.auto_retries == 1
+
+
+def test_a_partial_success_keeps_its_reason(controller, qapp):
+    task = _task(controller)
+    _complete(controller, task, DownloadResult.classify(
+        completed=1, errors=('Postprocessing: Conversion failed!',)))
+
+    assert task.state is TaskState.COMPLETED_WITH_ERRORS
+    assert task.error_code is AppErrorCode.POSTPROCESSING_FAILED
+
+
+# ------------------------------------------------------------------ removal
 
 
 def test_removal_does_not_touch_the_files(controller, tmp_path, qapp):
-    plik = tmp_path / 'film.mp4'
-    plik.write_text('dane')
+    media_file = tmp_path / 'video.mp4'
+    media_file.write_text('data')
     task = _task(controller)
-    task.filepath = str(plik)
+    task.filepath = str(media_file)
     _fail(controller, task, AppErrorCode.PRIVATE_VIDEO)
 
     controller.remove_failed()
     assert controller.failed_tasks() == []
-    assert plik.exists()
+    assert media_file.exists()
 
 
 # --------------------------------------------------------- state separation
@@ -334,3 +377,24 @@ def test_a_forgotten_controller_stops_its_thread(qapp, tmp_path, monkeypatch):
     # Called on the way out, and the thread really was still running: without
     # this the process would abort somewhere else entirely
     assert closed == [True]
+
+
+def test_a_pending_retry_can_be_cancelled(controller, qapp):
+    task = _task(controller)
+    _fail(controller, task)
+    assert task.state is TaskState.RETRYING
+
+    controller.cancel([task.id])
+    _pump_timers(qapp)
+    assert task.state is TaskState.CANCELLED
+
+
+def test_the_second_stream_is_downloading_not_post_processing(controller, qapp):
+    from app.core.models import DownloadProgress
+
+    task = _task(controller)
+    controller._on_progress(task.id, DownloadProgress(status='finished'))
+    assert task.state is TaskState.POSTPROCESSING
+    controller._on_progress(task.id, DownloadProgress(status='downloading',
+                                                      downloaded_bytes=1, total_bytes=10))
+    assert task.state is TaskState.DOWNLOADING

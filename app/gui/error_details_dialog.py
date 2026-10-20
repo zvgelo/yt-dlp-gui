@@ -86,7 +86,7 @@ class ErrorDetailsDialog(QDialog):
         error = FriendlyError(task.error_code or AppErrorCode.UNKNOWN, task.error)
         self.reason_label.setText(labels.error_text(error))
         self.meta_label.setText(' · '.join(filter(None, [
-            self.tr('Category: {0}').format(error.category.value),
+            self.tr('Category: {0}').format(labels.error_category_label(error.category)),
             self.tr('Address: {0}').format(task.url),
             self.tr('Playlist: {0}').format(task.request.playlist_title)
             if task.request.playlist_title else '',

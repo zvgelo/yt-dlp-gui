@@ -109,9 +109,10 @@ def target_directory(request: DownloadRequest) -> str:
 
 
 def _safe_component(name: str) -> str:
-    """An approximation of what yt-dlp will do with the folder name."""
-    cleaned = ''.join('_' if ch in '/\\:*?"<>|' else ch for ch in name).strip(' .')
-    return cleaned or 'playlist'
+    """The folder name yt-dlp writes for a template field."""
+    from yt_dlp.utils import sanitize_filename
+
+    return sanitize_filename(name) or 'playlist'
 
 
 class DuplicateService:
@@ -142,10 +143,6 @@ class DuplicateService:
                 self._policies.pop(batch_id, None)
             else:
                 self._policies[batch_id] = policy
-
-    def forget_batch(self, batch_id: str) -> None:
-        with self._lock:
-            self._policies.pop(batch_id, None)
 
     # --------------------------------------------------------- reservations
 

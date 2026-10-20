@@ -1,4 +1,4 @@
-"""Wymiary interfejsu.
+"""Interface metrics.
 
 Colours no longer live here; they belong to `app/theme`. This module keeps
 only the metrics needed for manual painting and layout, so that the card
@@ -13,8 +13,9 @@ THUMB_HEIGHT = 54
 CARD_HEIGHT = 76
 CARD_PADDING = 12
 CARD_GAP = 14
-#: Status column width; must fit the longest label ("Post-processing")
-STATUS_COLUMN = 132
+#: Status column width; must fit the longest state label in every language
+#: ("⚠ Decision required" is the longest in English)
+STATUS_COLUMN = 140
 
 # --- media preview in the download dialog ---
 PREVIEW_WIDTH = 128

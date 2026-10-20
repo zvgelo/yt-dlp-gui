@@ -49,7 +49,11 @@ sys.path.insert(0, str(ROOT))
 
 DEFAULT_CACHE = ROOT / 'build' / 'runtime-cache'
 
-#: BtbN publishes dated, immutable auto-builds together with `checksums.sha256`.
+#: The builds come from BtbN, who publishes dated auto-builds but deletes them
+#: after a few weeks, which broke every pin sooner or later. The exact archives
+#: are therefore mirrored as assets of this repository's `runtime-deps`
+#: pre-release and fetched from there; FFMPEG_RELEASE names the BtbN build they
+#: are byte-for-byte copies of, and the checksums below still apply.
 #: The LGPL variant is used deliberately: it is the more permissive of the two
 #: variants he ships, and it still contains the muxers, the AAC/Opus/FLAC
 #: support and libmp3lame that this application needs.
@@ -63,6 +67,8 @@ FFMPEG_BUILD = 'ffmpeg-n8.1.2-44-g7c533d0f86'
 FFMPEG_VERSION = '8.1.2'
 FFMPEG_LICENSE = 'LGPL-3.0-or-later'
 FFMPEG_SOURCE = 'https://github.com/BtbN/FFmpeg-Builds'
+#: Where the pinned FFmpeg archives are fetched from (see above)
+FFMPEG_MIRROR = 'https://github.com/zvgelo/yt-dlp-gui/releases/download/runtime-deps'
 
 #: Deno 2.3.0 is yt-dlp's minimum; the pin is well above it.
 DENO_VERSION = '2.9.5'
@@ -85,8 +91,7 @@ PINS: dict[str, list[Download]] = {
     'linux': [
         Download(
             'ffmpeg',
-            f'https://github.com/BtbN/FFmpeg-Builds/releases/download/{FFMPEG_RELEASE}/'
-            f'{FFMPEG_BUILD}-linux64-lgpl-8.1.tar.xz',
+            f'{FFMPEG_MIRROR}/{FFMPEG_BUILD}-linux64-lgpl-8.1.tar.xz',
             '',
             {'bin/ffmpeg': 'ffmpeg', 'bin/ffprobe': 'ffprobe', 'LICENSE.txt': 'FFMPEG-LICENSE.txt'},
         ),
@@ -101,8 +106,7 @@ PINS: dict[str, list[Download]] = {
     'windows': [
         Download(
             'ffmpeg',
-            f'https://github.com/BtbN/FFmpeg-Builds/releases/download/{FFMPEG_RELEASE}/'
-            f'{FFMPEG_BUILD}-win64-lgpl-8.1.zip',
+            f'{FFMPEG_MIRROR}/{FFMPEG_BUILD}-win64-lgpl-8.1.zip',
             '',
             {'bin/ffmpeg.exe': 'ffmpeg.exe', 'bin/ffprobe.exe': 'ffprobe.exe',
              'LICENSE.txt': 'FFMPEG-LICENSE.txt'},

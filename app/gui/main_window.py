@@ -377,7 +377,7 @@ class MainWindow(QMainWindow):
             self.log_dock.append('WARN', f'Could not load history: {exc}')
             return
         if restored:
-            self.log_dock.append('INFO', f'Historia: {restored}')
+            self.log_dock.append('INFO', f'History: restored {restored} items')
 
     def clear_history(self) -> None:
         """Clear the history after confirmation. Downloaded files are never removed."""
@@ -692,15 +692,20 @@ class MainWindow(QMainWindow):
     @Slot()
     def open_settings(self) -> None:
         dialog = SettingsDialog(self._settings, self._themes, self._translations,
-                                self._ffmpeg.message, self,
+                                self._ffmpeg, self,
                                 history_count=self.controller.history_count(),
                                 on_clear_history=self.clear_history)
-        if dialog.exec() != int(QDialog.DialogCode.Accepted):
+        accepted = dialog.exec() == int(QDialog.DialogCode.Accepted)
+        result = dialog.result_settings() if accepted else None
+        # A closed dialog would otherwise live on as a child of the window and
+        # keep retranslating itself on every language change
+        dialog.deleteLater()
+        if result is None:
             return
-        self._apply_settings(dialog.result_settings())
+        self._apply_settings(result)
         self._ffmpeg = self._service.ffmpeg_status()
         self.top_bar.apply_settings(self._settings)
-        self.statusBar().showMessage(self.tr('Settings saved'), 4000)
+        self.statusBar().showMessage(self.tr('Preferences saved'), 4000)
 
     @Slot()
     def open_about(self) -> None:
@@ -712,7 +717,6 @@ class MainWindow(QMainWindow):
             self, self.tr('Download folder'), self._settings.output_dir)
         if directory:
             self._apply_settings(self._settings.replace(output_dir=directory))
-            self.top_bar.update_directory(directory)
 
     def _on_defaults_changed(self) -> None:
         bar = self.top_bar
@@ -724,9 +728,15 @@ class MainWindow(QMainWindow):
         self._apply_settings(self._settings.replace(**changes))
 
     def _apply_settings(self, settings: AppSettings) -> None:
+        previous = self._settings
         self._settings = settings
         self._store.save(settings)
         self._service.update_settings(settings)
+        # The bar reads the same settings when it rebuilds (a language change,
+        # switching media kind); a stale copy would bring old values back
+        self.top_bar.remember_settings(settings)
+        if settings.output_dir != previous.output_dir:
+            self.top_bar.update_directory(settings.output_dir)
 
     def _set_filter(self, queue_filter: QueueFilter) -> None:
         self._filter = queue_filter
@@ -736,12 +746,17 @@ class MainWindow(QMainWindow):
         self.failed_bar.setVisible(queue_filter is QueueFilter.FAILED)
 
         # Playlists have their own model whose row is a playlist, not a file
-        if queue_filter.uses_playlist_model:
-            self.view.setModel(self.playlist_model)
-        else:
-            self.view.setModel(self.proxy)
+        model = self.playlist_model if queue_filter.uses_playlist_model else self.proxy
+        if self.view.model() is not model:
+            # A new model brings a new selection model; Qt leaves the old one
+            # behind, and its connection has to be made once per model swap
+            old_selection = self.view.selectionModel()
+            self.view.setModel(model)
+            self.view.selectionModel().selectionChanged.connect(lambda *_: self._refresh())
+            if old_selection is not None:
+                old_selection.deleteLater()
+        if not queue_filter.uses_playlist_model:
             self.proxy.set_filter(queue_filter)
-        self.view.selectionModel().selectionChanged.connect(lambda *_: self._refresh())
         self.search_edit.setEnabled(not queue_filter.uses_playlist_model)
         self._refresh()
 

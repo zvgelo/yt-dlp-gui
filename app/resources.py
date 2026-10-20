@@ -49,10 +49,6 @@ def resource_path(*parts: str) -> Path:
     return resource_root().joinpath(*parts)
 
 
-def assets_dir() -> Path:
-    return resource_path('assets')
-
-
 def icons_dir() -> Path:
     return resource_path('assets', 'icons')
 
@@ -103,17 +99,6 @@ def dev_runtime_dir() -> Path | None:
     if is_frozen():
         return None
     return resource_root() / DEV_RUNTIME_DIR_NAME / platform_tag()
-
-
-def executable_dir() -> Path:
-    """The directory the running program was started from.
-
-    Useful for diagnostics only. Never derive storage from it: an AppImage
-    mounts somewhere under /tmp and a Windows install may be read-only.
-    """
-    if is_frozen():
-        return Path(sys.executable).resolve().parent
-    return Path(sys.argv[0]).resolve().parent if sys.argv and sys.argv[0] else Path.cwd()
 
 
 def exe_suffix() -> str:

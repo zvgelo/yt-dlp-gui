@@ -93,7 +93,7 @@ class LogDock(QDockWidget):
         self._view.moveCursor(QTextCursor.MoveOperation.End)
 
     def restyle(self) -> None:
-        """Przerysowuje dziennik w kolorach aktualnego motywu."""
+        """Repaint the log in the colours of the current theme."""
         show_debug = self._debug_check.isChecked()
         theme = active_theme()
         html = ''.join(

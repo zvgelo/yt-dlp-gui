@@ -20,7 +20,7 @@ def _template(service, **kwargs) -> str:
     return service.download_options(request)['outtmpl']['default']
 
 
-# ------------------------------------------------- sam builder szablonu
+# ------------------------------------------------- the template builder alone
 
 
 @pytest.mark.parametrize(('folder', 'numbered', 'expected'), [
@@ -57,7 +57,7 @@ def test_custom_user_template_is_preserved():
     assert template == '%(playlist_title)s/%(playlist_index)03d - %(uploader)s - %(title)s.%(ext)s'
 
 
-# --------------------------------------------------- integracja z serwisem
+# --------------------------------------------------- service integration
 
 
 def test_numbering_enabled(service):

@@ -1,4 +1,4 @@
-"""Start screen shown when the queue is empty, as in the "main window" mockup.
+"""Start screen shown when the queue is empty.
 
 The icon is drawn as vectors rather than a Unicode glyph or a bitmap: not
 every system has a download arrow in its default font, the drawing scales on
@@ -79,7 +79,7 @@ class EmptyState(QWidget):
 
 
 def _download_icon(size: int, ratio: float) -> QPixmap:
-    """Arrow above a tray: a simple counterpart of the mockup illustration."""
+    """Arrow above a tray, the same mark as the application logo."""
     ratio = max(1.0, ratio)
     pixmap = QPixmap(int(size * ratio), int(size * ratio))
     pixmap.setDevicePixelRatio(ratio)
@@ -94,13 +94,13 @@ def _download_icon(size: int, ratio: float) -> QPixmap:
     unit = size / 100.0
     # arrow shaft
     painter.drawLine(QPointF(50 * unit, 18 * unit), QPointF(50 * unit, 60 * unit))
-    # grot
+    # arrow head
     head = QPainterPath()
     head.moveTo(34 * unit, 46 * unit)
     head.lineTo(50 * unit, 62 * unit)
     head.lineTo(66 * unit, 46 * unit)
     painter.drawPath(head)
-    # tacka
+    # tray
     tray = QPainterPath()
     tray.moveTo(24 * unit, 68 * unit)
     tray.lineTo(24 * unit, 82 * unit)

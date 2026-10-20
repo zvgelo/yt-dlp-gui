@@ -6,6 +6,9 @@ about the other.
 
 from __future__ import annotations
 
+import dataclasses
+import json
+
 from ..state import TaskState
 from .history import HistoryRecord, PlaylistRecord, now_iso
 from .models import DownloadAttempt, DownloadRequest, DownloadTask, MediaKind, PlaylistJob
@@ -42,7 +45,35 @@ def record_from_task(task: DownloadTask) -> HistoryRecord:
         error_message=task.error,
         duplicate_of_record_id=task.duplicate_of_record_id,
         duplicate_kind=task.duplicate_kind,
+        request_options=_options_json(request),
     )
+
+
+#: Request fields that have no column of their own and must survive a restart
+_PERSISTED_OPTIONS = tuple(
+    field.name for field in dataclasses.fields(DownloadRequest)
+    if field.name not in ('url', 'output_dir', 'source_url', 'kind', 'quality',
+                          'playlist_title', 'playlist_index'))
+
+
+def _options_json(request: DownloadRequest) -> str:
+    options = {name: getattr(request, name) for name in _PERSISTED_OPTIONS}
+    options['subtitle_languages'] = list(request.subtitle_languages)
+    return json.dumps(options, sort_keys=True)
+
+
+def _options_from_json(text: str) -> dict:
+    """Stored options, keeping only fields this version still knows."""
+    try:
+        data = json.loads(text) if text else {}
+    except ValueError:
+        return {}
+    if not isinstance(data, dict):
+        return {}
+    options = {name: data[name] for name in _PERSISTED_OPTIONS if name in data}
+    if 'subtitle_languages' in options:
+        options['subtitle_languages'] = tuple(options['subtitle_languages'] or ())
+    return options
 
 
 def task_from_record(record: HistoryRecord, attempts: list[dict] | None = None) -> DownloadTask:
@@ -63,6 +94,10 @@ def task_from_record(record: HistoryRecord, attempts: list[dict] | None = None) 
         playlist_title=record.playlist_title,
         playlist_index=record.playlist_index,
     )
+    # Records written before the options were stored fall back to defaults
+    options = _options_from_json(record.request_options)
+    if options:
+        request = dataclasses.replace(request, **options)
 
     error_code = None
     if record.error_code:

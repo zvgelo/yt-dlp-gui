@@ -356,10 +356,6 @@ class DownloadResult:
         return self.output_files[0] if self.output_files else ''
 
     @property
-    def is_success(self) -> bool:
-        return self.status is DownloadResultStatus.SUCCESS
-
-    @property
     def has_problems(self) -> bool:
         return self.status in (DownloadResultStatus.PARTIAL_SUCCESS, DownloadResultStatus.ERROR)
 
@@ -611,15 +607,3 @@ class PlaylistJob:
             return DownloadResultStatus.PARTIAL_SUCCESS
         return DownloadResultStatus.SUCCESS
 
-    def as_result(self) -> DownloadResult:
-        """Rezultat playlisty w tej samej postaci, co pojedynczego zadania."""
-        return DownloadResult(
-            status=self.status,
-            total_items=self.total_items,
-            completed_items=self.completed_items,
-            failed_items=self.failed_items,
-            skipped_items=self.cancelled_items,
-            playlist_enumeration_complete=self.enumeration_complete,
-            enumeration_errors=(self.enumeration_error,) if self.enumeration_error else (),
-            output_files=tuple(task.filepath for task in self.tasks if task.filepath),
-        )

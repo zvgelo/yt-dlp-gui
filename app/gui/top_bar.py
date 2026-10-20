@@ -1,4 +1,4 @@
-"""Top bar from the mockup: logo, "Paste link", defaults, folder and actions."""
+"""Top bar: logo, "Paste link", defaults, folder and actions."""
 
 from __future__ import annotations
 
@@ -193,6 +193,10 @@ class TopBar(QWidget):
         self._reload_qualities()
         self._reload_containers()
         self.update_directory(settings.output_dir)
+
+    def remember_settings(self, settings: AppSettings) -> None:
+        """Keep the bar's copy current without rebuilding its controls."""
+        self._settings = settings
 
     def update_directory(self, path: str) -> None:
         self._directory = path

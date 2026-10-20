@@ -58,7 +58,7 @@ def test_boolean_values_come_back_as_bool(store):
 
 def test_corrupt_value_does_not_crash(store):
     store.save(AppSettings())
-    store._settings.setValue('app/concurrent_fragments', 'nie-liczba')
+    store._settings.setValue('app/concurrent_fragments', 'not-a-number')
     # Instead of raising we fall back to the default value
     assert store.load().concurrent_fragments == AppSettings().concurrent_fragments
 

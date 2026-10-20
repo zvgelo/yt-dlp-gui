@@ -21,11 +21,14 @@ DEFAULT_OUTTMPL = '%(title)s.%(ext)s'
 
 
 def default_output_dir() -> str:
-    # Localised download folder first, then the English default
-    for candidate in (Path.home() / 'Pobrane', Path.home() / 'Downloads'):
-        if candidate.is_dir():
-            return str(candidate)
-    return str(Path.home())
+    """The desktop's download folder, whatever it is called in this locale."""
+    from PySide6.QtCore import QStandardPaths
+
+    location = QStandardPaths.writableLocation(QStandardPaths.StandardLocation.DownloadLocation)
+    if location and Path(location).is_dir():
+        return location
+    downloads = Path.home() / 'Downloads'
+    return str(downloads if downloads.is_dir() else Path.home())
 
 
 @dataclasses.dataclass

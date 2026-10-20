@@ -24,11 +24,6 @@ class AppState(enum.Enum):
     ERROR = 'error'
     CANCELLED = 'cancelled'
 
-    @property
-    def is_busy(self) -> bool:
-        return self in (AppState.ANALYZING, AppState.DOWNLOADING, AppState.POSTPROCESSING)
-
-
 class TaskState(enum.Enum):
     """State of a single queue item."""
 

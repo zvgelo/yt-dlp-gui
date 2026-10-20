@@ -57,7 +57,7 @@ def _existing(store, path, *, media_kind='video', output_format='mp4', quality=0
 
 def _touch(path):
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text('dane')
+    path.write_text('data')
     return path
 
 
@@ -91,8 +91,8 @@ def test_without_a_media_id_we_do_not_guess():
 
 
 def test_the_target_folder_includes_the_playlist_subfolder():
-    request = _request('/base', playlist_title='Moja lista', create_playlist_folder=True)
-    assert target_directory(request).endswith('/base/Moja lista')
+    request = _request('/base', playlist_title='My list', create_playlist_folder=True)
+    assert target_directory(request).endswith('/base/My list')
 
     request.create_playlist_folder = False
     assert target_directory(request) == '/base'
@@ -102,7 +102,7 @@ def test_the_target_folder_includes_the_playlist_subfolder():
 
 
 def test_the_same_folder_means_an_automatic_skip(service, store, tmp_path):
-    _existing(store, tmp_path / 'A' / 'film.mp4')
+    _existing(store, tmp_path / 'A' / 'video.mp4')
     result = service.check(_request(str(tmp_path / 'A')), YOUTUBE)
 
     assert result.kind is DuplicateKind.SAME_TARGET
@@ -123,7 +123,7 @@ def test_a_missing_file_on_disk_allows_downloading_again(service, store, tmp_pat
 
 
 def test_a_different_folder_needs_a_decision(service, store, tmp_path):
-    record = _existing(store, tmp_path / 'A' / 'film.mp4')
+    record = _existing(store, tmp_path / 'A' / 'video.mp4')
     result = service.check(_request(str(tmp_path / 'B')), YOUTUBE)
 
     assert result.kind is DuplicateKind.OTHER_TARGET
@@ -132,19 +132,19 @@ def test_a_different_folder_needs_a_decision(service, store, tmp_path):
 
 
 def test_audio_does_not_collide_with_video(service, store, tmp_path):
-    _existing(store, tmp_path / 'A' / 'film.mp4', media_kind='video', output_format='mp4')
+    _existing(store, tmp_path / 'A' / 'video.mp4', media_kind='video', output_format='mp4')
     request = _request(str(tmp_path / 'A'), kind=MediaKind.AUDIO, audio_format='mp3')
 
     assert service.check(request, YOUTUBE).kind is DuplicateKind.NONE
 
 
 def test_a_different_quality_is_not_the_same_file(service, store, tmp_path):
-    _existing(store, tmp_path / 'A' / 'film.mp4', quality=720)
+    _existing(store, tmp_path / 'A' / 'video.mp4', quality=720)
     assert service.check(_request(str(tmp_path / 'A'), quality=2160), YOUTUBE).kind \
         is DuplicateKind.NONE
 
 
-# ------------------------------------------------------------- rezerwacje
+# ------------------------------------------------------------- reservations
 
 
 def test_two_jobs_do_not_download_the_same_thing(service):
@@ -193,7 +193,7 @@ def test_reservation_is_thread_safe(service):
     assert results.count(DuplicateKind.ALREADY_QUEUED) == 7
 
 
-# --------------------------------------------------------------- polityki
+# --------------------------------------------------------------- policies
 
 
 def test_by_default_we_ask(service):
@@ -206,7 +206,7 @@ def test_a_policy_applies_only_to_its_own_batch(service):
     assert service.policy('batch-2') is DuplicatePolicy.ASK
 
 
-# ------------------------------------------------- integracja z kontrolerem
+# ------------------------------------------------- controller integration
 
 
 @pytest.fixture
@@ -220,7 +220,7 @@ def controller(qapp, tmp_path):
 
 
 def test_the_same_folder_is_skipped_without_asking(controller, tmp_path):
-    _existing(controller._history, tmp_path / 'A' / 'film.mp4')
+    _existing(controller._history, tmp_path / 'A' / 'video.mp4')
     task = _task(request=_request(str(tmp_path / 'A')))
     controller.enqueue([task], autostart=False)
 
@@ -230,12 +230,12 @@ def test_the_same_folder_is_skipped_without_asking(controller, tmp_path):
 
 
 def test_a_different_folder_goes_to_needs_review(controller, tmp_path):
-    _existing(controller._history, tmp_path / 'A' / 'film.mp4')
+    _existing(controller._history, tmp_path / 'A' / 'video.mp4')
     task = _task(request=_request(str(tmp_path / 'B')))
     controller.enqueue([task], autostart=False)
 
     assert task.state is TaskState.NEEDS_REVIEW
-    assert task.duplicate_of_path.endswith('film.mp4')
+    assert task.duplicate_of_path.endswith('video.mp4')
     assert [t.id for t in controller.pending_review()] == [task.id]
 
 
@@ -252,7 +252,7 @@ def test_a_conflict_does_not_stop_the_queue(controller, tmp_path):
 
 
 def test_approve_returns_the_item_to_the_queue(controller, tmp_path):
-    _existing(controller._history, tmp_path / 'A' / 'film.mp4')
+    _existing(controller._history, tmp_path / 'A' / 'video.mp4')
     task = _task(request=_request(str(tmp_path / 'B')))
     controller.enqueue([task], autostart=False)
 
@@ -262,7 +262,7 @@ def test_approve_returns_the_item_to_the_queue(controller, tmp_path):
 
 
 def test_skipping_is_not_a_failure(controller, tmp_path):
-    _existing(controller._history, tmp_path / 'A' / 'film.mp4')
+    _existing(controller._history, tmp_path / 'A' / 'video.mp4')
     task = _task(request=_request(str(tmp_path / 'B')))
     controller.enqueue([task], autostart=False)
 
@@ -368,9 +368,17 @@ def test_the_reservation_is_released_after_removal(controller, tmp_path):
 
 
 def test_the_reservation_is_released_after_a_skip(controller, tmp_path):
-    _existing(controller._history, tmp_path / 'A' / 'film.mp4')
+    _existing(controller._history, tmp_path / 'A' / 'video.mp4')
     task = _task(request=_request(str(tmp_path / 'B')))
     controller.enqueue([task], autostart=False)
 
     controller.skip([task.id])
     assert controller.duplicates.reserved_count() == 0
+
+
+def test_the_playlist_folder_matches_what_yt_dlp_writes():
+    from yt_dlp.utils import sanitize_filename
+
+    from app.core.duplicates import _safe_component
+
+    assert _safe_component('AC/DC: Best? Hits') == sanitize_filename('AC/DC: Best? Hits')

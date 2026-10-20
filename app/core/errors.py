@@ -128,13 +128,17 @@ _PATTERNS: tuple[tuple[tuple[str, ...], AppErrorCode], ...] = (
     (('private video', 'this video is private'), AppErrorCode.PRIVATE_VIDEO),
     (('sign in to confirm your age', 'age-restricted', 'age restricted', 'confirm your age'),
      AppErrorCode.AGE_RESTRICTED),
-    (('sign in', 'log in', 'login required', 'requires authentication', 'account'),
-     AppErrorCode.LOGIN_REQUIRED),
+    # YouTube says "the YouTube account associated with this video has been
+    # terminated"; that is a removed video, not a sign-in problem
+    (('has been terminated',), AppErrorCode.UNAVAILABLE),
+    (('sign in', 'log in', 'login required', 'requires authentication', 'members-only',
+      'join this channel'), AppErrorCode.LOGIN_REQUIRED),
     # yt-dlp extractors use many variants of the same message; the common
     # denominator is the phrase "available in your country"
     (('available in your country', 'geo restricted', 'geo-restricted',
       'blocked in your country', 'not available from your location'), AppErrorCode.GEO_RESTRICTED),
-    (('video unavailable', 'has been removed', 'no longer available', 'video has been deleted'),
+    (('video unavailable', 'video is unavailable', 'video is not available', 'has been removed',
+      'no longer available', 'video has been deleted'),
      AppErrorCode.UNAVAILABLE),
     (('unsupported url',), AppErrorCode.UNSUPPORTED_URL),
     (('is not a valid url', 'invalid url'), AppErrorCode.INVALID_URL),
@@ -142,10 +146,12 @@ _PATTERNS: tuple[tuple[tuple[str, ...], AppErrorCode], ...] = (
     (('no video formats found', 'drm protected'), AppErrorCode.NO_FORMATS),
     (('ffmpeg not found', 'ffprobe and ffmpeg not found', 'ffmpeg is not installed'),
      AppErrorCode.FFMPEG_MISSING),
+    # Certificate and proxy failures arrive wrapped in "Unable to download
+    # webpage", so they are matched before the generic network fragments
+    (('certificate verify failed', 'ssl:', 'sslerror'), AppErrorCode.SSL_ERROR),
+    (('proxy',), AppErrorCode.PROXY_ERROR),
     (('unable to download webpage', 'unable to download api page', 'connection', 'timed out',
       'temporary failure in name resolution', 'network is unreachable'), AppErrorCode.NETWORK_ERROR),
-    (('certificate verify failed', 'ssl'), AppErrorCode.SSL_ERROR),
-    (('proxy',), AppErrorCode.PROXY_ERROR),
     (('permission denied',), AppErrorCode.PERMISSION_DENIED),
     (('no space left',), AppErrorCode.NO_DISK_SPACE),
     (('postprocessing:', 'error while processing'), AppErrorCode.POSTPROCESSING_FAILED),
@@ -179,6 +185,24 @@ def describe(exc: BaseException) -> FriendlyError:
             return FriendlyError(AppErrorCode.NO_DISK_SPACE, details)
         if exc.errno in (errno.EACCES, errno.EPERM):
             return FriendlyError(AppErrorCode.PERMISSION_DENIED, details)
+    return describe_message(details)
+
+
+def describe_messages(messages) -> FriendlyError:
+    """The most useful of several collected messages.
+
+    yt-dlp reports a failed download through the logger and a `DownloadError`
+    that repeats the same text, so a result carries a list rather than one
+    exception. The first recognised message wins; otherwise the first one.
+    """
+    described = [describe_message(message) for message in messages if message]
+    return next((error for error in described if error.is_known),
+                described[0] if described else FriendlyError())
+
+
+def describe_message(message: str) -> FriendlyError:
+    """Recognise a yt-dlp error message."""
+    details = _clean(message)
 
     # Checked before the substring table: a paginated playlist failure looks
     # like a plain network error but must not restart the whole job.

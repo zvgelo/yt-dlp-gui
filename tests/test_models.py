@@ -80,16 +80,9 @@ def test_duration_formatting(value, expected):
 
 
 def test_extracting_urls():
-    text = 'zobacz https://example.com/a oraz https://example.com/b, i znowu https://example.com/a'
+    text = 'see https://example.com/a and https://example.com/b, and again https://example.com/a'
     assert fmt.extract_urls(text) == ['https://example.com/a', 'https://example.com/b']
 
 
 def test_no_urls():
     assert fmt.extract_urls('no links here') == []
-
-
-@pytest.mark.parametrize(('count', 'expected'), [
-    (0, 'pozycji'), (1, 'pozycja'), (3, 'pozycje'), (5, 'pozycji'), (12, 'pozycji'), (22, 'pozycje'),
-])
-def test_counter_plural_form(count, expected):
-    assert fmt.plural_items(count) == expected
